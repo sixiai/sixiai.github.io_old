@@ -1,5 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>四夕的博客小站</title><link>https://sixiai.github.io</link><description>一颗快乐码农</description><copyright>四夕的博客小站</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/52995168?v=4</url><title>avatar</title><link>https://sixiai.github.io</link></image><lastBuildDate>Mon, 27 Oct 2025 09:23:56 +0000</lastBuildDate><managingEditor>四夕的博客小站</managingEditor><ttl>60</ttl><webMaster>四夕的博客小站</webMaster><item><title>四夕的博客测试</title><link>https://sixiai.github.io/post/si-xi-de-bo-ke-ce-shi.html</link><description># 一级标题
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>四夕的博客小站</title><link>https://sixiai.github.io</link><description>一颗快乐码农</description><copyright>四夕的博客小站</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/52995168?v=4</url><title>avatar</title><link>https://sixiai.github.io</link></image><lastBuildDate>Mon, 27 Oct 2025 09:43:09 +0000</lastBuildDate><managingEditor>四夕的博客小站</managingEditor><ttl>60</ttl><webMaster>四夕的博客小站</webMaster><item><title>STM32的IWDG配置</title><link>https://sixiai.github.io/post/STM32-de-IWDG-pei-zhi.html</link><description># STM32cubemx的IWDG配置
+
+&lt;img width='997' height='675' alt='Image' src='https://github.com/user-attachments/assets/835715d8-c220-4ece-aa73-e887d318803b' /&gt;
+
+。</description><guid isPermaLink="true">https://sixiai.github.io/post/STM32-de-IWDG-pei-zhi.html</guid><pubDate>Mon, 27 Oct 2025 09:42:37 +0000</pubDate></item><item><title>四夕的博客测试</title><link>https://sixiai.github.io/post/si-xi-de-bo-ke-ce-shi.html</link><description># 一级标题
 ## 二级标题
 
 

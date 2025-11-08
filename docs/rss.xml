@@ -1,5 +1,69 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>四夕的博客小站</title><link>https://sixiai.github.io</link><description>一颗快乐码农</description><copyright>四夕的博客小站</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/52995168?v=4</url><title>avatar</title><link>https://sixiai.github.io</link></image><lastBuildDate>Fri, 31 Oct 2025 13:09:42 +0000</lastBuildDate><managingEditor>四夕的博客小站</managingEditor><ttl>60</ttl><webMaster>四夕的博客小站</webMaster><item><title>认识线性调频信号（LFM）</title><link>https://sixiai.github.io/post/ren-shi-xian-xing-diao-pin-xin-hao-%EF%BC%88LFM%EF%BC%89.html</link><description>LFM（线性调频）既可以是实数（真实物理载波）形式，也可以用复数（解析/基带等效）形式表示——取决于你在做什么。</description><guid isPermaLink="true">https://sixiai.github.io/post/ren-shi-xian-xing-diao-pin-xin-hao-%EF%BC%88LFM%EF%BC%89.html</guid><pubDate>Fri, 31 Oct 2025 00:59:03 +0000</pubDate></item><item><title>SBL布阵定位原理</title><link>https://sixiai.github.io/post/SBL-bu-zhen-ding-wei-yuan-li.html</link><description># 四水听器情况
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>四夕的博客小站</title><link>https://sixiai.github.io</link><description>一颗快乐码农</description><copyright>四夕的博客小站</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/52995168?v=4</url><title>avatar</title><link>https://sixiai.github.io</link></image><lastBuildDate>Sat, 08 Nov 2025 08:55:55 +0000</lastBuildDate><managingEditor>四夕的博客小站</managingEditor><ttl>60</ttl><webMaster>四夕的博客小站</webMaster><item><title>Matlab中的TCP和串口(uart)服务</title><link>https://sixiai.github.io/post/Matlab-zhong-de-TCP-he-chuan-kou-%28uart%29-fu-wu.html</link><description>一个很简单的TCP例子如下：
+```
+clc; clear; close all;
+
+t = tcpclient('192.168.1.120', 8080, 'Timeout', 5);
+PACK = 128;         % 每帧长度
+IS_BIG_ENDIAN = false;
+sbl_dada = [0,0,0,0,0];
+disp('等待二进制帧...');
+buf = uint8([]);
+i = 0;
+a = 1;
+h = 1.732;
+
+figure(1)
+
+while true
+    n = t.NumBytesAvailable;
+    if n &gt; 0
+        buf = read(t, n, 'uint8');
+    end
+    % 够一帧就解析
+    while numel(buf) == PACK
+        distance1_vals = typecast(buf(45:48), 'single');
+        distance2_vals = typecast(buf(49:52), 'single');
+        distance3_vals = typecast(buf(53:56), 'single');
+        distance = [distance1_vals distance2_vals distance3_vals];
+        body_position = distance_calculation_xyz(distance,a,h);
+        increase_vals = typecast(buf(117:120), 'single');
+        energy_vals = typecast(buf(121:124), 'single');
+        sbl_dada = [sbl_dada;distance1_vals distance2_vals distance3_vals increase_vals energy_vals];
+        fprintf('distance: %f  %f  %f  %f  %f\n', distance1_vals, distance2_vals, distance3_vals, increase_vals, energy_vals);
+        buf = uint8([]);
+        i = i + 1;
+        subplot(3,2,[1 2]);
+        plot(i,distance1_vals,'b.',i,distance2_vals,'g.',i,distance3_vals,'r.');
+        hold on
+        ylim([11 20])
+        grid on
+        
+        subplot(3,2,3);
+        plot(i,increase_vals,'b.');
+        ylim([-500 300])
+        grid on
+        hold on
+        subplot(3,2,4);
+        plot(i,energy_vals,'b.');
+        ylim([0 20000000])
+        grid on
+        hold on
+
+        subplot(3,2,[5 6]);
+        plot(body_position(:,1),body_position(:,2),'r*-')
+        grid on
+        hold on
+    end
+
+    pause(0.005);
+end
+
+function body_position = distance_calculation_xyz(distance,a,h)
+% 三水听器等边三角形布阵
+% 1号水听器位于X轴的正半轴，坐标为(a,0,0)，
+% 2号水听器位于Y轴的正半轴，坐标为(0,h,0)，
+% 3号水听器位于X轴的负半轴，坐标为(-a,0,0)。</description><guid isPermaLink="true">https://sixiai.github.io/post/Matlab-zhong-de-TCP-he-chuan-kou-%28uart%29-fu-wu.html</guid><pubDate>Sat, 08 Nov 2025 08:55:25 +0000</pubDate></item><item><title>认识线性调频信号（LFM）</title><link>https://sixiai.github.io/post/ren-shi-xian-xing-diao-pin-xin-hao-%EF%BC%88LFM%EF%BC%89.html</link><description>LFM（线性调频）既可以是实数（真实物理载波）形式，也可以用复数（解析/基带等效）形式表示——取决于你在做什么。</description><guid isPermaLink="true">https://sixiai.github.io/post/ren-shi-xian-xing-diao-pin-xin-hao-%EF%BC%88LFM%EF%BC%89.html</guid><pubDate>Fri, 31 Oct 2025 00:59:03 +0000</pubDate></item><item><title>SBL布阵定位原理</title><link>https://sixiai.github.io/post/SBL-bu-zhen-ding-wei-yuan-li.html</link><description># 四水听器情况
 
 &lt;img width='343' height='390' alt='Image' src='https://github.com/user-attachments/assets/866ff70c-a416-463e-9515-63093d10345b' /&gt;
 

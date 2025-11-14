@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/52995168?v=4"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="# STM32CubeMX的ADC配置（以H7为例）
+
+
+
+## 1、打开ADC通道
+
+根据自己的IO口，到Analog中选择对应的ADCx和INx;
+
+
+## 2、ADC时钟配置
+
+首先到**Clock Configuration**里对ADC的时钟进行配置，通常来说为**20~40MHz**之间为好;
+
+
+## 3、ADC进行初始化配置
+
+<u>***打开Parameter Setting***</u>
+
+<u>***默认配置需重点选择`Resolution`、`Conversion Data Management Mode`、`External Trigger Conversion Source`、`Rank` 等选项***</u>
+
+### 3.1  ADCs_Conmon_Setting配置和解释
+
+#### 3.1.1 Mode配置
+
+**推荐设置**：Independent mode
+**解释**：H7 里有多个 ADC（ADC1/2/3），可以互相“联机”做多模式采样，你现在只用一个 ADC，就保持独立模式即可。">
+<meta property="og:title" content="STM32CubeMX的ADC配置（以H7为例） ">
+<meta property="og:description" content="# STM32CubeMX的ADC配置（以H7为例）
+
+
+
+## 1、打开ADC通道
+
+根据自己的IO口，到Analog中选择对应的ADCx和INx;
+
+
+## 2、ADC时钟配置
+
+首先到**Clock Configuration**里对ADC的时钟进行配置，通常来说为**20~40MHz**之间为好;
+
+
+## 3、ADC进行初始化配置
+
+<u>***打开Parameter Setting***</u>
+
+<u>***默认配置需重点选择`Resolution`、`Conversion Data Management Mode`、`External Trigger Conversion Source`、`Rank` 等选项***</u>
+
+### 3.1  ADCs_Conmon_Setting配置和解释
+
+#### 3.1.1 Mode配置
+
+**推荐设置**：Independent mode
+**解释**：H7 里有多个 ADC（ADC1/2/3），可以互相“联机”做多模式采样，你现在只用一个 ADC，就保持独立模式即可。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://sixiai.github.io/post/STM32CubeMX-de-ADC-pei-zhi-%EF%BC%88-yi-H7-wei-li-%EF%BC%89%20.html">
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/52995168?v=4">
+<title>STM32CubeMX的ADC配置（以H7为例） </title>
+
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">STM32CubeMX的ADC配置（以H7为例） </h1>
+<div class="title-right">
+    <a href="https://sixiai.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/sixiai/sixiai.github.io/issues/6" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><h1>STM32CubeMX的ADC配置（以H7为例）</h1>
+<h2>1、打开ADC通道</h2>
+<p>根据自己的IO口，到Analog中选择对应的ADCx和INx;</p>
+<h2>2、ADC时钟配置</h2>
+<p>首先到<strong>Clock Configuration</strong>里对ADC的时钟进行配置，通常来说为<strong>20~40MHz</strong>之间为好;</p>
+<h2>3、ADC进行初始化配置</h2>
+<p><em><strong>打开Parameter Setting</strong></em></p>
+<p><em><strong>默认配置需重点选择<code class="notranslate">Resolution</code>、<code class="notranslate">Conversion Data Management Mode</code>、<code class="notranslate">External Trigger Conversion Source</code>、<code class="notranslate">Rank</code> 等选项</strong></em></p>
+<h3>3.1  ADCs_Conmon_Setting配置和解释</h3>
+<h4>3.1.1 Mode配置</h4>
+<p><strong>推荐设置</strong>：Independent mode<br>
+<strong>解释</strong>：H7 里有多个 ADC（ADC1/2/3），可以互相“联机”做多模式采样，你现在只用一个 ADC，就保持独立模式即可。</p>
+<h3>3.2  ADC_Settings配置和解释</h3>
+<h4>3.2.1 Clock Prescaler配置</h4>
+<p><strong>推荐设置</strong>：Asynchronous clock mode divided by 1（异步时钟，分频 1）<br>
+<strong>解释</strong>：这是 ADC 内部的时钟分频器；你现在 ADC 异步时钟已经是 25 MHz，再除以 1 就是 25 MHz；25 MHz 对 100 kSPS 来说绰绰有余，也在安全范围内。</p>
+<h4>3.2.2 Resolution配置</h4>
+<p><strong>推荐设置</strong>：ADC 12-bit resolution<br>
+<strong>解释</strong>：它决定 ADC 输出结果的位数，即从模拟电压到数字值的“精细程度”；H7独有的优化模式：ADC x-bit optimized resolution，比普通 12-bit 更快（Pipeline 优化），带硬件校准，噪声更低采样延迟更短。</p>
+<h4>3.2.3 Scan Conversion Mode配置</h4>
+<p><strong>推荐设置</strong>：Disabled<br>
+<strong>解释</strong>：扫描模式是一次触发采很多通道；如果你只采 1 个通道，关掉就行。</p>
+<h4>3.2.4 Continuous Conversion Mode配置</h4>
+<p><strong>推荐设置</strong>：Disabled<br>
+<strong>解释</strong>：开启时：ADC 一直自己循环转换，频率由转换时间决定，不好精确控制在 100 kSPS。我们打算用 定时器 TRGO 来精确触发 ADC，所以关掉连续模式。</p>
+<h4>3.2.5 Discontinuous Conversion Mode配置</h4>
+<p><strong>推荐设置</strong>：Disabled<br>
+<strong>解释</strong>：把一个“扫描序列”拆成几段用多次触发来完成。你现在既不扫描，又只采一个通道，完全用不到，关。</p>
+<h4>3.2.6 End Of Conversion Selection配置</h4>
+<p><strong>推荐设置</strong>：End of single conversion<br>
+<strong>解释</strong>：只有两个选项，End of single conversion和End of sequence of conversion，它们决定 EOC 标志/中断在什么时候置位。<br>
+<strong>含义</strong>：<br>
+<strong>1）End of single conversion</strong>：<br>
+每完成一个通道的转换，就认为一次 EOC。适用情况：单通道（Number of Conversion = 1），每次触发只转这一个通道——那就是每次都触发 EOC；多通道扫描时（Scan Enabled），每转完一个通道就触发一次 EOC/中断。若你用中断，会在“每个通道结束”都进一次中断；用 DMA 时问题不大，但标志位刷新得比较频繁。<br>
+<strong>2）End of sequence of conversion</strong>：<br>
+只在“整条规则序列完成后”才认为 EOC。适用情况：扫描多个通道时（例如 Rank1…Rank4），只有所有通道都转换完，才置 EOC。结果：若你用中断，每次扫描整套通道才进一次中断（中断频率降低）；DMA 一般配合这个更合理，一轮数据都准备好了才认为“完成”。<br>
+<em><strong>如果开了扫描、采多个通道，考虑改成 “End of sequence of conversion” 来减少中断次数。</strong></em></p>
+<h4>3.2.7 Overrun behaviour配置</h4>
+<p><strong>推荐设置</strong>：Overrun data overwritten<br>
+<strong>解释</strong>：这个选项代表：新数据覆盖旧数据。配合 DMA 连续采样时，这样你拿到的总是最新的数据，不会因为偶尔来不及处理卡死。</p>
+<h4>3.2.8 Left Bit Shift配置</h4>
+<p><strong>推荐设置</strong>：No bit shift<br>
+<strong>解释</strong>：是否对转换结果做左移（×2ⁿ）。一般不需要，保持原始 12 位，后面你在软件里自己处理即可。</p>
+<h4>3.2.9 Conversion Data Management Mode配置</h4>
+<p><strong>推荐设置</strong>：DMA Circular Mode<br>
+<strong>解释</strong>：这个是 “转换结果往哪儿放、怎么管理”的总开关。<br>
+<strong>含义</strong>：<br>
+<strong>1）Regular Conversion data stored in DR register only</strong>：<br>
+规则转换结果只存到 DR 寄存器里；每次 ADC 转换结束，结果放到 <code class="notranslate">ADCx-&gt;DR</code>；想拿数据只能：CPU 轮询读 <code class="notranslate">HAL_ADC_GetValue()</code>，或者你自己手动给这个寄存器配 DMA（一般用不到）；适合：<strong>采样很慢、偶尔读一下的场景</strong>，比如几百 Hz 的温度、电位器。<br>
+<strong>2）DFSDM Mode</strong>：<br>
+把 ADC 结果送到 DFSDM 接口；DFSDM = Digital Filter for Sigma-Delta Modulators（数字滤波模块），用来做音频/高分辨率滤波等。选这个模式时，ADC 的数据会直接通过专门接口送给 DFSDM 过滤器，而不是简单地进 DR / DMA。适合：<strong>需要 DFSDM 做后端数字滤波</strong>（音频/电流采样等专业应用）。一般项目、普通电压采集用不到，也不建议随便选。<br>
+<strong>3）DMA One Shot Mode</strong>：<br>
+使用 DMA，但“一次性搬完就停”；ADC 每做一次“序列转换”（或连续一段），通过 DMA 把数据搬到你配置的缓冲区，<strong>缓冲区满了就停止 DMA 请求</strong>。想再采一批数据，要重新调用 <code class="notranslate">HAL_ADC_Start_DMA()</code>。用途：采一段固定长度波形：比如需要 4096 点的单次采集，然后离线处理 FFT 等。适合“<strong>一次抓一段</strong>”的采样，不是你现在这种“持续流式采样”。<br>
+**4）DMA Circular Mode **：<br>
+使用 DMA，并把缓冲区当成环形队列不停写；ADC 每次转换完成，DMA 自动把结果写入数组。写到数组末尾后，从头再写，<strong>循环覆盖</strong>。只要 ADC 和定时器在跑，<strong>数据就源源不断进缓冲区</strong>，CPU 只用在 DMA 半满/全满中断里处理。完美适配：单通道连续采样固定采样率。</p>
+<h4>3.2.10 Low Power Auto Wait配置</h4>
+<p><strong>推荐设置</strong>：Disabled<br>
+<strong>解释</strong>：打开后：ADC 做完一次转换，要等你把数据读走才会开始下一次转换。这样会让实际采样间隔和 CPU / DMA 的读速度强相关，没法保证稳定的 100 kSPS。所以关掉。</p>
+<h3>3.3  ADC_Regular_ConversionMode配置和解释</h3>
+<h4>3.3.1 Enable Regular Conversions配置</h4>
+<p><strong>推荐设置</strong>：Enable<br>
+<strong>解释</strong>：允许使用“常规通道”（Regular group）进行转换。一般我们都是用 Regular group 来采数据，所以要开。</p>
+<h4>3.3.2 Enable Regular Oversampling配置</h4>
+<p><strong>推荐设置</strong>：Disable<br>
+<strong>解释</strong>：过采样是硬件多次采样再平均，提高有效分辨率。你先实现稳定的 100 kSPS，再考虑要不要过采样。关掉就简单很多。</p>
+<h4>3.3.3 Oversampling Ratio配置</h4>
+<p><strong>推荐设置</strong>：保持默认（比如 <code class="notranslate">1</code>），因为 oversampling 已经关了<br>
+<strong>解释</strong>：开启 Oversampling 时才生效。比如 4、8、16 表示硬件采 4/8/16 次再合并。</p>
+<h4>3.3.4 Number Of Conversion配置</h4>
+<p><strong>推荐设置</strong>：1<br>
+<strong>解释</strong>：一次“规则序列”中有几个通道要转换。你只采一个通道 → 写 1。</p>
+<h4>3.3.5 External Trigger Conversion Source配置</h4>
+<p><strong>推荐设置</strong>： 选一个定时器 TRGO，例如：<code class="notranslate">Regular Conversion launched by external event</code> → <code class="notranslate">TIM2_TRGO</code>（或你打算用的 TIMx_TRGO）<br>
+<strong>解释</strong>：这个设置决定“谁来触发 ADC 转换”。你看到的大概有几类：<br>
+<strong>含义</strong>：<br>
+<strong>1）Regular Conversion launched by software</strong>：<br>
+<strong>由软件启动转换</strong>。意思：不用外部触发，只有当你在代码里调用 <code class="notranslate">HAL_ADC_Start()</code> / <code class="notranslate">HAL_ADC_Start_DMA()</code> 或直接设置寄存器时，才开始转换。特点：采样频率由<strong>你软件控制</strong>（比如 while 里一直 <code class="notranslate">HAL_ADC_Start</code>），很难做到“精确 100 kHz”。你要固定 100 kSPS，不推荐用这个。<br>
+<strong>2）Timer x Capture Compare n event（例如 Timer 1 Capture Compare 1 event）</strong>：<br>
+对应硬件事件：<strong>“定时器 X 的比较通道 n 事件（TIMx_CCn）”</strong>。触发时刻：当定时器计数器 CNT 走到 CCRn（比较寄存器）设定的值，发生一次 Compare 事件；这时会发出一个硬件信号给 ADC，用来触发转换。用途：可以把 ADC 采样对齐到某个 PWM 波形的特定相位（比如电机控制里，在 PWM 中点采样电流）；或者做“可变采样时刻”的应用。对你这种“<strong>固定周期采单通道</strong>”的应用来说，不需要这么复杂，更适合用 Trigger Out。<br>
+<strong>3）Timer x Trigger Out event （例如 Timer 4 Trigger Out event）</strong>：<br>
+对应硬件：<strong>TIMx_TRGO（Trigger Output）</strong>。TRGO 的来源在定时器里可以配置，最常用的选择是：<strong>Update event</strong>（溢出/重装载时）作为 TRGO。也就是每个周期末尾发一个触发。对应到你要的功能：把 TIM4 配成 <strong>更新频率 = 100 kHz</strong>；再把 <code class="notranslate">Trigger Event Selection TRGO</code> 设为 <code class="notranslate">Update event</code>；然后在 ADC 的 External Trigger Conversion Source 选 <strong>Timer 4 Trigger Out event</strong>；于是定时器每 10 µs 发一个 TRGO → ADC 每 10 µs 转一次 → 采样率 = 100 kSPS。<br>
+**4）HRTIM1 Trigger Out event **：<br>
+高分辨率定时器（HRTIM）的触发输出。多用于复杂 PWM、电机控制、电源等场景，对采样时间有很精细的要求。对你目前“只要 100k 均匀采样”来说，完全可以不用。<br>
+**5）LPTIM 1/2 Out event **：<br>
+低功耗定时器（LPTIM）的输出事件。主要为了在 低功耗模式下 也能定期唤醒 ADC 采样。一般电池设备 / 低功耗应用才用，普通采样用普通 TIM 就行。</p>
+<h4>3.3.6 External Trigger Conversion Edge配置</h4>
+<p><strong>推荐设置</strong>：Trigger detection on the rising edge<br>
+<strong>解释</strong>：定时器 TRGO 是一个脉冲信号，这里选“上升沿触发一次转换”，就够了。</p>
+<h4>3.3.7 Rank 1配置</h4>
+<p>在 Rank 1 子项里有两个非常重要的设置：<br>
+<strong>1.Channel</strong><br>
+推荐设置：选你接信号的那一路，比如：<code class="notranslate">INP1</code> / <code class="notranslate">ADC_CHANNEL_1</code> 等。<br>
+解释：告诉 ADC “第一路要转换哪个引脚”。<br>
+<strong>2.Sampling Time（采样时间）</strong><br>
+推荐设置： 中等偏大一点，比如：<code class="notranslate">32.5 cycles</code><br>
+解释：总转换时间 ≈ (采样周期 + 固定 12.5 周期) / f_ADC；25 MHz 下：</p>
+$$T_{conv} \approx \frac{32.5 + 12.5}{25MHz} \approx 1.8μs$$
+<p>你的采样周期是 10 µs（= 1 / 100 kHz），1.8 µs 远小于 10 µs，完全来得及；采样时间长一些，对输入源阻抗高、信号不够“硬”的情况更友好，精度更稳。<br>
+<strong>3.Offset Number</strong><br>
+推荐设置：No offset<br>
+解释：给这一路 ADC 结果套用哪一个硬件偏移寄存器（Offset）。在 STM32H7 里，每个 ADC 有几组 Offset 寄存器（比如 OFR1～OFR4），你可以在别的地方（寄存器 / HAL）给它设置一个数值 <code class="notranslate">OffsetValue</code>，然后 ADC 转换结果 = 原始值 - OffsetValue（硬件自动减）。</p>
+<h3>3.4  ADC_Injected_ConversionMode配置和解释</h3>
+<h4>3.4.1 Enable Injected Conversions配置</h4>
+<p><strong>推荐设置</strong>：Disable<br>
+<strong>解释</strong>：注入通道（Injected group）是专门做“紧急临时插队采样”的另一组通道。你现在不用，全部关掉。以后要做类似“中断时多采几次”之类高级功能再开。</p>
+<h3>3.5  Analog Watchdog 1/2/3配置和解释</h3>
+<h4>3.5.1 Enable Analog WatchDogX Mode配置</h4>
+<p><strong>推荐设置</strong>：全部不勾选<br>
+<strong>解释</strong>：Analog Watchdog 是硬件比较器，用来监控 ADC 值是否超出上下限（类似硬件“报警”）。配好阈值后，超过范围会触发中断。你现在只是正常采集波形/电压，先关掉，逻辑简单。以后要做“过压/欠压保护”再开。</p></div>
+<div style="font-size:small;margin-top:8px;float:right;">转载请注明出处</div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://sixiai.github.io">四夕的博客小站</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if("10/27/2025"!=""){
+    var startSite=new Date("10/27/2025");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行"+diffDay+"天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","sixiai/sixiai.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+
+
+</script>
+<script>MathJax = {tex: {inlineMath: [["$", "$"]]}};</script><script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</html>

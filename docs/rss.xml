@@ -1,5 +1,30 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>四夕的博客小站</title><link>https://sixiai.github.io</link><description>一颗快乐码农</description><copyright>四夕的博客小站</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/52995168?v=4</url><title>avatar</title><link>https://sixiai.github.io</link></image><lastBuildDate>Sat, 08 Nov 2025 08:55:55 +0000</lastBuildDate><managingEditor>四夕的博客小站</managingEditor><ttl>60</ttl><webMaster>四夕的博客小站</webMaster><item><title>Matlab中的TCP和串口(uart)服务</title><link>https://sixiai.github.io/post/Matlab-zhong-de-TCP-he-chuan-kou-%28uart%29-fu-wu.html</link><description>一个很简单的TCP例子如下：
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>四夕的博客小站</title><link>https://sixiai.github.io</link><description>一颗快乐码农</description><copyright>四夕的博客小站</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/52995168?v=4</url><title>avatar</title><link>https://sixiai.github.io</link></image><lastBuildDate>Fri, 14 Nov 2025 03:38:25 +0000</lastBuildDate><managingEditor>四夕的博客小站</managingEditor><ttl>60</ttl><webMaster>四夕的博客小站</webMaster><item><title>STM32CubeMX的ADC配置（以H7为例） </title><link>https://sixiai.github.io/post/STM32CubeMX-de-ADC-pei-zhi-%EF%BC%88-yi-H7-wei-li-%EF%BC%89%20.html</link><description># STM32CubeMX的ADC配置（以H7为例）
+
+
+
+## 1、打开ADC通道
+
+根据自己的IO口，到Analog中选择对应的ADCx和INx;
+
+
+## 2、ADC时钟配置
+
+首先到**Clock Configuration**里对ADC的时钟进行配置，通常来说为**20~40MHz**之间为好;
+
+
+## 3、ADC进行初始化配置
+
+&lt;u&gt;***打开Parameter Setting***&lt;/u&gt;
+
+&lt;u&gt;***默认配置需重点选择`Resolution`、`Conversion Data Management Mode`、`External Trigger Conversion Source`、`Rank` 等选项***&lt;/u&gt;
+
+### 3.1  ADCs_Conmon_Setting配置和解释
+
+#### 3.1.1 Mode配置
+
+**推荐设置**：Independent mode
+**解释**：H7 里有多个 ADC（ADC1/2/3），可以互相“联机”做多模式采样，你现在只用一个 ADC，就保持独立模式即可。</description><guid isPermaLink="true">https://sixiai.github.io/post/STM32CubeMX-de-ADC-pei-zhi-%EF%BC%88-yi-H7-wei-li-%EF%BC%89%20.html</guid><pubDate>Fri, 14 Nov 2025 03:28:15 +0000</pubDate></item><item><title>Matlab中的TCP和串口(uart)服务</title><link>https://sixiai.github.io/post/Matlab-zhong-de-TCP-he-chuan-kou-%28uart%29-fu-wu.html</link><description>一个很简单的TCP例子如下：
 ```
 clc; clear; close all;
 

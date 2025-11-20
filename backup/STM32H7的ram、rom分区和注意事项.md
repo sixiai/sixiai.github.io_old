@@ -72,6 +72,8 @@ MEMORY
 
 这个内存布局是理解和优化STM32H7性能的关键。通过在链接器脚本中合理地分配代码和数据到不同的内存区域，可以最大化地发挥其高性能优势。
 
+<img width="941" height="1076" alt="Image" src="https://github.com/user-attachments/assets/af239e4c-d40e-46ee-adb6-edc4c6c16ea8" />
+
 <img width="1243" height="979" alt="Image" src="https://github.com/user-attachments/assets/9918af33-bb60-47d6-9b7d-8bced8d4eee5" />
 
 ## 3、keil中强制设定存储位置

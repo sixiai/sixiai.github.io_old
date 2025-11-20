@@ -149,6 +149,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 用途: 固化在芯片内部的只读存储器，包含了ST的出厂Bootloader。通过设置BOOT0和BOOT1引脚，可以让芯片从这里启动，从而通过串口、USB等方式更新Flash中的程序。<br>
 特性: 用户不可更改。</p>
 <p>这个内存布局是理解和优化STM32H7性能的关键。通过在链接器脚本中合理地分配代码和数据到不同的内存区域，可以最大化地发挥其高性能优势。</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/af239e4c-d40e-46ee-adb6-edc4c6c16ea8"><img width="941" height="1076" alt="Image" src="https://github.com/user-attachments/assets/af239e4c-d40e-46ee-adb6-edc4c6c16ea8" style="max-width: 100%; height: auto; max-height: 1076px;"></a></p>
 <p><a target="_blank" rel="noopener noreferrer" href="https://github.com/user-attachments/assets/9918af33-bb60-47d6-9b7d-8bced8d4eee5"><img width="1243" height="979" alt="Image" src="https://github.com/user-attachments/assets/9918af33-bb60-47d6-9b7d-8bced8d4eee5" style="max-width: 100%; height: auto; max-height: 979px;"></a></p>
 <h2>3、keil中强制设定存储位置</h2>
 <div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-c">//添加__attribute__((section(".ARM.__at_0x24000000")))，就把变量定义到了0x24000000开始的AXI SRAM中</span>

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>四夕的博客小站</title><link>https://sixiai.github.io</link><description>一颗快乐码农</description><copyright>四夕的博客小站</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/52995168?v=4</url><title>avatar</title><link>https://sixiai.github.io</link></image><lastBuildDate>Sun, 04 Jan 2026 09:02:55 +0000</lastBuildDate><managingEditor>四夕的博客小站</managingEditor><ttl>60</ttl><webMaster>四夕的博客小站</webMaster><item><title>STM32F103C8T6串口黑匣子</title><link>https://sixiai.github.io/post/STM32F103C8T6-chuan-kou-hei-xia-zi.html</link><description># SD卡数据记录系统 - 完整总结 
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>四夕的博客小站</title><link>https://sixiai.github.io/sixiai.github.io_old</link><description>一颗快乐码农</description><copyright>四夕的博客小站</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/52995168?v=4</url><title>avatar</title><link>https://sixiai.github.io/sixiai.github.io_old</link></image><lastBuildDate>Sun, 11 Jan 2026 16:12:17 +0000</lastBuildDate><managingEditor>四夕的博客小站</managingEditor><ttl>60</ttl><webMaster>四夕的博客小站</webMaster><item><title>STM32F103C8T6串口黑匣子</title><link>https://sixiai.github.io/sixiai.github.io_old/post/STM32F103C8T6-chuan-kou-hei-xia-zi.html</link><description># SD卡数据记录系统 - 完整总结 
 
 ## 一、系统功能
 
@@ -1037,8 +1037,8 @@ Created: data01.txt
 
 
 
-。</description><guid isPermaLink="true">https://sixiai.github.io/post/STM32F103C8T6-chuan-kou-hei-xia-zi.html</guid><pubDate>Sun, 04 Jan 2026 09:02:22 +0000</pubDate></item><item><title>STM32H7的ram、rom分区和注意事项</title><link>https://sixiai.github.io/post/STM32H7-de-ram%E3%80%81rom-fen-qu-he-zhu-yi-shi-xiang.html</link><description>## 1、STM32H7系列ram的分布
-ram（随机存取存储器，random access memory），以STM32H743VIT6为例，为1M RAM+2M Flash的存储空间。</description><guid isPermaLink="true">https://sixiai.github.io/post/STM32H7-de-ram%E3%80%81rom-fen-qu-he-zhu-yi-shi-xiang.html</guid><pubDate>Thu, 20 Nov 2025 10:52:39 +0000</pubDate></item><item><title>STM32CubeMX的ADC配置（以H7为例） </title><link>https://sixiai.github.io/post/STM32CubeMX-de-ADC-pei-zhi-%EF%BC%88-yi-H7-wei-li-%EF%BC%89%20.html</link><description># STM32CubeMX的ADC配置（以H7为例）
+。</description><guid isPermaLink="true">https://sixiai.github.io/sixiai.github.io_old/post/STM32F103C8T6-chuan-kou-hei-xia-zi.html</guid><pubDate>Sun, 04 Jan 2026 09:02:22 +0000</pubDate></item><item><title>STM32H7的ram、rom分区和注意事项</title><link>https://sixiai.github.io/sixiai.github.io_old/post/STM32H7-de-ram%E3%80%81rom-fen-qu-he-zhu-yi-shi-xiang.html</link><description>## 1、STM32H7系列ram的分布
+ram（随机存取存储器，random access memory），以STM32H743VIT6为例，为1M RAM+2M Flash的存储空间。</description><guid isPermaLink="true">https://sixiai.github.io/sixiai.github.io_old/post/STM32H7-de-ram%E3%80%81rom-fen-qu-he-zhu-yi-shi-xiang.html</guid><pubDate>Thu, 20 Nov 2025 10:52:39 +0000</pubDate></item><item><title>STM32CubeMX的ADC配置（以H7为例） </title><link>https://sixiai.github.io/sixiai.github.io_old/post/STM32CubeMX-de-ADC-pei-zhi-%EF%BC%88-yi-H7-wei-li-%EF%BC%89%20.html</link><description># STM32CubeMX的ADC配置（以H7为例）
 
 
 
@@ -1063,7 +1063,7 @@ ram（随机存取存储器，random access memory），以STM32H743VIT6为例�
 #### 3.1.1 Mode配置
 
 **推荐设置**：Independent mode
-**解释**：H7 里有多个 ADC（ADC1/2/3），可以互相“联机”做多模式采样，你现在只用一个 ADC，就保持独立模式即可。</description><guid isPermaLink="true">https://sixiai.github.io/post/STM32CubeMX-de-ADC-pei-zhi-%EF%BC%88-yi-H7-wei-li-%EF%BC%89%20.html</guid><pubDate>Fri, 14 Nov 2025 03:28:15 +0000</pubDate></item><item><title>Matlab中的TCP和串口(uart)服务</title><link>https://sixiai.github.io/post/Matlab-zhong-de-TCP-he-chuan-kou-%28uart%29-fu-wu.html</link><description>一个很简单的TCP例子如下：
+**解释**：H7 里有多个 ADC（ADC1/2/3），可以互相“联机”做多模式采样，你现在只用一个 ADC，就保持独立模式即可。</description><guid isPermaLink="true">https://sixiai.github.io/sixiai.github.io_old/post/STM32CubeMX-de-ADC-pei-zhi-%EF%BC%88-yi-H7-wei-li-%EF%BC%89%20.html</guid><pubDate>Fri, 14 Nov 2025 03:28:15 +0000</pubDate></item><item><title>Matlab中的TCP和串口(uart)服务</title><link>https://sixiai.github.io/sixiai.github.io_old/post/Matlab-zhong-de-TCP-he-chuan-kou-%28uart%29-fu-wu.html</link><description>一个很简单的TCP例子如下：
 ```
 clc; clear; close all;
 
@@ -1127,19 +1127,19 @@ function body_position = distance_calculation_xyz(distance,a,h)
 % 三水听器等边三角形布阵
 % 1号水听器位于X轴的正半轴，坐标为(a,0,0)，
 % 2号水听器位于Y轴的正半轴，坐标为(0,h,0)，
-% 3号水听器位于X轴的负半轴，坐标为(-a,0,0)。</description><guid isPermaLink="true">https://sixiai.github.io/post/Matlab-zhong-de-TCP-he-chuan-kou-%28uart%29-fu-wu.html</guid><pubDate>Sat, 08 Nov 2025 08:55:25 +0000</pubDate></item><item><title>认识线性调频信号（LFM）</title><link>https://sixiai.github.io/post/ren-shi-xian-xing-diao-pin-xin-hao-%EF%BC%88LFM%EF%BC%89.html</link><description>LFM（线性调频）既可以是实数（真实物理载波）形式，也可以用复数（解析/基带等效）形式表示——取决于你在做什么。</description><guid isPermaLink="true">https://sixiai.github.io/post/ren-shi-xian-xing-diao-pin-xin-hao-%EF%BC%88LFM%EF%BC%89.html</guid><pubDate>Fri, 31 Oct 2025 00:59:03 +0000</pubDate></item><item><title>SBL布阵定位原理</title><link>https://sixiai.github.io/post/SBL-bu-zhen-ding-wei-yuan-li.html</link><description># 四水听器情况
+% 3号水听器位于X轴的负半轴，坐标为(-a,0,0)。</description><guid isPermaLink="true">https://sixiai.github.io/sixiai.github.io_old/post/Matlab-zhong-de-TCP-he-chuan-kou-%28uart%29-fu-wu.html</guid><pubDate>Sat, 08 Nov 2025 08:55:25 +0000</pubDate></item><item><title>认识线性调频信号（LFM）</title><link>https://sixiai.github.io/sixiai.github.io_old/post/ren-shi-xian-xing-diao-pin-xin-hao-%EF%BC%88LFM%EF%BC%89.html</link><description>LFM（线性调频）既可以是实数（真实物理载波）形式，也可以用复数（解析/基带等效）形式表示——取决于你在做什么。</description><guid isPermaLink="true">https://sixiai.github.io/sixiai.github.io_old/post/ren-shi-xian-xing-diao-pin-xin-hao-%EF%BC%88LFM%EF%BC%89.html</guid><pubDate>Fri, 31 Oct 2025 00:59:03 +0000</pubDate></item><item><title>SBL布阵定位原理</title><link>https://sixiai.github.io/sixiai.github.io_old/post/SBL-bu-zhen-ding-wei-yuan-li.html</link><description># 四水听器情况
 
 &lt;img width='343' height='390' alt='Image' src='https://github.com/user-attachments/assets/866ff70c-a416-463e-9515-63093d10345b' /&gt;
 
-如图1所示为SBL的坐标系统，1号水听器位于水听器基阵的原点坐标为(0,0,0)、2号水听器位于x坐标轴上坐标为(A,0,0)、3号水听器位于y坐标轴上坐标为(0,B,0)、4号水听器位于z坐标轴上坐标为(0,0,C)。</description><guid isPermaLink="true">https://sixiai.github.io/post/SBL-bu-zhen-ding-wei-yuan-li.html</guid><pubDate>Tue, 28 Oct 2025 03:04:54 +0000</pubDate></item><item><title>STM32的IWDG配置</title><link>https://sixiai.github.io/post/STM32-de-IWDG-pei-zhi.html</link><description># STM32cubemx的IWDG配置
+如图1所示为SBL的坐标系统，1号水听器位于水听器基阵的原点坐标为(0,0,0)、2号水听器位于x坐标轴上坐标为(A,0,0)、3号水听器位于y坐标轴上坐标为(0,B,0)、4号水听器位于z坐标轴上坐标为(0,0,C)。</description><guid isPermaLink="true">https://sixiai.github.io/sixiai.github.io_old/post/SBL-bu-zhen-ding-wei-yuan-li.html</guid><pubDate>Tue, 28 Oct 2025 03:04:54 +0000</pubDate></item><item><title>STM32的IWDG配置</title><link>https://sixiai.github.io/sixiai.github.io_old/post/STM32-de-IWDG-pei-zhi.html</link><description># STM32cubemx的IWDG配置
 
 &lt;img width='997' height='675' alt='Image' src='https://github.com/user-attachments/assets/835715d8-c220-4ece-aa73-e887d318803b' /&gt;
 
 &lt;img width='1141' height='546' alt='Image' src='https://github.com/user-attachments/assets/9aecc106-45a5-40e1-8c56-ff4fa311fe61' /&gt;
 
 以上述为例：IWDG时钟频率为32 000Hz；
-这里超时时间为32*（4095+1）/32000 = 4.096s。</description><guid isPermaLink="true">https://sixiai.github.io/post/STM32-de-IWDG-pei-zhi.html</guid><pubDate>Mon, 27 Oct 2025 09:42:37 +0000</pubDate></item><item><title>四夕的博客测试</title><link>https://sixiai.github.io/post/si-xi-de-bo-ke-ce-shi.html</link><description># 一级标题
+这里超时时间为32*（4095+1）/32000 = 4.096s。</description><guid isPermaLink="true">https://sixiai.github.io/sixiai.github.io_old/post/STM32-de-IWDG-pei-zhi.html</guid><pubDate>Mon, 27 Oct 2025 09:42:37 +0000</pubDate></item><item><title>四夕的博客测试</title><link>https://sixiai.github.io/sixiai.github.io_old/post/si-xi-de-bo-ke-ce-shi.html</link><description># 一级标题
 ## 二级标题
 
 
-。</description><guid isPermaLink="true">https://sixiai.github.io/post/si-xi-de-bo-ke-ce-shi.html</guid><pubDate>Mon, 27 Oct 2025 09:14:31 +0000</pubDate></item></channel></rss>
+。</description><guid isPermaLink="true">https://sixiai.github.io/sixiai.github.io_old/post/si-xi-de-bo-ke-ce-shi.html</guid><pubDate>Mon, 27 Oct 2025 09:14:31 +0000</pubDate></item></channel></rss>

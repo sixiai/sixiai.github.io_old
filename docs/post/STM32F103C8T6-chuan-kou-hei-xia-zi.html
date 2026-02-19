@@ -2093,7 +2093,7 @@ Created: data01.txt
 <meta property="og:url" content="https://sixiai.github.io/sixiai.github.io_old/post/STM32F103C8T6-chuan-kou-hei-xia-zi.html">
 <meta property="og:image" content="https://avatars.githubusercontent.com/u/52995168?v=4">
 <title>STM32F103C8T6串口黑匣子</title>
-<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
 
 
 </head>
@@ -2186,907 +2186,925 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </code></pre>
 <h2>三、核心代码</h2>
 <h4>3.1 sd_spi.h</h4>
-<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-c">/* sd_spi.h */</span>
-<span class="pl-k">#ifndef</span> <span class="pl-s1">__SD_SPI_H</span>
-<span class="pl-k">#define</span> <span class="pl-s1">__SD_SPI_H</span>
+<pre lang="c" class="notranslate"><code class="notranslate">/* sd_spi.h */
+#ifndef __SD_SPI_H
+#define __SD_SPI_H
 
-<span class="pl-k">#include</span> <span class="pl-s">"main.h"</span>
-<span class="pl-k">#include</span> <span class="pl-s">"spi.h"</span>
+#include "main.h"
+#include "spi.h"
 
-<span class="pl-c">/* SD卡类型定义 */</span>
-<span class="pl-k">#define</span> <span class="pl-c1">SD_TYPE_ERR</span>     0x00
-<span class="pl-k">#define</span> <span class="pl-c1">SD_TYPE_MMC</span>     0x01
-<span class="pl-k">#define</span> <span class="pl-c1">SD_TYPE_V1</span>      0x02
-<span class="pl-k">#define</span> <span class="pl-c1">SD_TYPE_V2</span>      0x04
-<span class="pl-k">#define</span> <span class="pl-c1">SD_TYPE_V2HC</span>    0x06
+/* SD卡类型定义 */
+#define SD_TYPE_ERR     0x00
+#define SD_TYPE_MMC     0x01
+#define SD_TYPE_V1      0x02
+#define SD_TYPE_V2      0x04
+#define SD_TYPE_V2HC    0x06
 
-<span class="pl-c">/* SD卡指令 */</span>
-<span class="pl-k">#define</span> <span class="pl-c1">CMD0</span>    0       // 复位
-<span class="pl-k">#define</span> <span class="pl-c1">CMD1</span>    1       // 初始化
-<span class="pl-k">#define</span> <span class="pl-c1">CMD8</span>    8       // 检查电压范围
-<span class="pl-k">#define</span> <span class="pl-c1">CMD9</span>    9       // 读CSD
-<span class="pl-k">#define</span> <span class="pl-c1">CMD10</span>   10      // 读CID
-<span class="pl-k">#define</span> <span class="pl-c1">CMD12</span>   12      // 停止传输
-<span class="pl-k">#define</span> <span class="pl-c1">CMD16</span>   16      // 设置块大小
-<span class="pl-k">#define</span> <span class="pl-c1">CMD17</span>   17      // 读单块
-<span class="pl-k">#define</span> <span class="pl-c1">CMD18</span>   18      // 读多块
-<span class="pl-k">#define</span> <span class="pl-c1">CMD23</span>   23      // 预擦除
-<span class="pl-k">#define</span> <span class="pl-c1">CMD24</span>   24      // 写单块
-<span class="pl-k">#define</span> <span class="pl-c1">CMD25</span>   25      // 写多块
-<span class="pl-k">#define</span> <span class="pl-c1">CMD41</span>   41      // 初始化(ACMD)
-<span class="pl-k">#define</span> <span class="pl-c1">CMD55</span>   55      // APP命令前缀
-<span class="pl-k">#define</span> <span class="pl-c1">CMD58</span>   58      // 读OCR
+/* SD卡指令 */
+#define CMD0    0       // 复位
+#define CMD1    1       // 初始化
+#define CMD8    8       // 检查电压范围
+#define CMD9    9       // 读CSD
+#define CMD10   10      // 读CID
+#define CMD12   12      // 停止传输
+#define CMD16   16      // 设置块大小
+#define CMD17   17      // 读单块
+#define CMD18   18      // 读多块
+#define CMD23   23      // 预擦除
+#define CMD24   24      // 写单块
+#define CMD25   25      // 写多块
+#define CMD41   41      // 初始化(ACMD)
+#define CMD55   55      // APP命令前缀
+#define CMD58   58      // 读OCR
 
-<span class="pl-c">/* 函数声明 */</span>
-<span class="pl-smi">uint8_t</span> <span class="pl-en">SD_Init</span>(<span class="pl-smi">void</span>);
-<span class="pl-smi">uint8_t</span> <span class="pl-en">SD_ReadDisk</span>(<span class="pl-smi">uint8_t</span> <span class="pl-c1">*</span><span class="pl-s1">buf</span>, <span class="pl-smi">uint32_t</span> <span class="pl-s1">sector</span>, <span class="pl-smi">uint8_t</span> <span class="pl-s1">cnt</span>);
-<span class="pl-smi">uint8_t</span> <span class="pl-en">SD_WriteDisk</span>(<span class="pl-smi">uint8_t</span> <span class="pl-c1">*</span><span class="pl-s1">buf</span>, <span class="pl-smi">uint32_t</span> <span class="pl-s1">sector</span>, <span class="pl-smi">uint8_t</span> <span class="pl-s1">cnt</span>);
-<span class="pl-smi">uint32_t</span> <span class="pl-en">SD_GetSectorCount</span>(<span class="pl-smi">void</span>);
+/* 函数声明 */
+uint8_t SD_Init(void);
+uint8_t SD_ReadDisk(uint8_t *buf, uint32_t sector, uint8_t cnt);
+uint8_t SD_WriteDisk(uint8_t *buf, uint32_t sector, uint8_t cnt);
+uint32_t SD_GetSectorCount(void);
 
-<span class="pl-k">extern</span> <span class="pl-smi">uint8_t</span> <span class="pl-s1">SD_Type</span>;
+extern uint8_t SD_Type;
 
-<span class="pl-k">#endif</span></pre></div>
+#endif
+
+</code></pre>
 <h4>3.2 sd_spi.c</h4>
-<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-c">/* sd_spi.c */</span>
-<span class="pl-k">#include</span> <span class="pl-s">"sd_spi.h"</span>
+<pre lang="c" class="notranslate"><code class="notranslate">/* sd_spi.c */
+#include "sd_spi.h"
 
-<span class="pl-smi">uint8_t</span> <span class="pl-s1">SD_Type</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>;
+uint8_t SD_Type = 0;
 
-<span class="pl-c">/* CS引脚控制 */</span>
-<span class="pl-k">#define</span> <span class="pl-en">SD_CS_LOW</span>()     HAL_GPIO_WritePin(CD_CS_GPIO_Port, CD_CS_Pin, GPIO_PIN_RESET)
-<span class="pl-k">#define</span> <span class="pl-en">SD_CS_HIGH</span>()    HAL_GPIO_WritePin(CD_CS_GPIO_Port, CD_CS_Pin, GPIO_PIN_SET)
+/* CS引脚控制 */
+#define SD_CS_LOW()     HAL_GPIO_WritePin(CD_CS_GPIO_Port, CD_CS_Pin, GPIO_PIN_RESET)
+#define SD_CS_HIGH()    HAL_GPIO_WritePin(CD_CS_GPIO_Port, CD_CS_Pin, GPIO_PIN_SET)
 
-<span class="pl-c">/* SPI读写一个字节 */</span>
-<span class="pl-k">static</span> <span class="pl-smi">uint8_t</span> <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-smi">uint8_t</span> <span class="pl-s1">data</span>)
+/* SPI读写一个字节 */
+static uint8_t SD_SPI_ReadWriteByte(uint8_t data)
 {
-    <span class="pl-smi">uint8_t</span> <span class="pl-s1">rxData</span>;
-    <span class="pl-en">HAL_SPI_TransmitReceive</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">hspi1</span>, <span class="pl-c1">&amp;</span><span class="pl-s1">data</span>, <span class="pl-c1">&amp;</span><span class="pl-s1">rxData</span>, <span class="pl-c1">1</span>, <span class="pl-c1">100</span>);
-    <span class="pl-k">return</span> <span class="pl-s1">rxData</span>;
+    uint8_t rxData;
+    HAL_SPI_TransmitReceive(&amp;hspi1, &amp;data, &amp;rxData, 1, 100);
+    return rxData;
 }
 
-<span class="pl-c">/* 设置SPI速度 */</span>
-<span class="pl-k">static</span> <span class="pl-smi">void</span> <span class="pl-en">SD_SPI_SetSpeed</span>(<span class="pl-smi">uint8_t</span> <span class="pl-s1">speed</span>)
+/* 设置SPI速度 */
+static void SD_SPI_SetSpeed(uint8_t speed)
 {
-    <span class="pl-en">__HAL_SPI_DISABLE</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">hspi1</span>);
-    <span class="pl-k">if</span>(<span class="pl-s1">speed</span> <span class="pl-c1">==</span> <span class="pl-c1">0</span>) {
-        <span class="pl-s1">hspi1</span>.<span class="pl-c1">Init</span>.<span class="pl-c1">BaudRatePrescaler</span> <span class="pl-c1">=</span> <span class="pl-c1">SPI_BAUDRATEPRESCALER_256</span>; <span class="pl-c">// 低速</span>
-    } <span class="pl-k">else</span> {
-        <span class="pl-s1">hspi1</span>.<span class="pl-c1">Init</span>.<span class="pl-c1">BaudRatePrescaler</span> <span class="pl-c1">=</span> <span class="pl-c1">SPI_BAUDRATEPRESCALER_4</span>;   <span class="pl-c">// 高速</span>
+    __HAL_SPI_DISABLE(&amp;hspi1);
+    if(speed == 0) {
+        hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256; // 低速
+    } else {
+        hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;   // 高速
     }
-    <span class="pl-en">HAL_SPI_Init</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">hspi1</span>);
-    <span class="pl-en">__HAL_SPI_ENABLE</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">hspi1</span>);
+    HAL_SPI_Init(&amp;hspi1);
+    __HAL_SPI_ENABLE(&amp;hspi1);
 }
 
-<span class="pl-c">/* 等待SD卡就绪 */</span>
-<span class="pl-k">static</span> <span class="pl-smi">uint8_t</span> <span class="pl-en">SD_WaitReady</span>(<span class="pl-smi">void</span>)
+/* 等待SD卡就绪 */
+static uint8_t SD_WaitReady(void)
 {
-    <span class="pl-smi">uint32_t</span> <span class="pl-s1">t</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>;
-    <span class="pl-k">do</span> {
-        <span class="pl-k">if</span>(<span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">0xFF</span>) <span class="pl-c1">==</span> <span class="pl-c1">0xFF</span>) <span class="pl-k">return</span> <span class="pl-c1">0</span>;
-        <span class="pl-s1">t</span><span class="pl-c1">++</span>;
-    } <span class="pl-k">while</span>(<span class="pl-s1">t</span> <span class="pl-c1">&lt;</span> <span class="pl-c1">0xFFFFFF</span>);
-    <span class="pl-k">return</span> <span class="pl-c1">1</span>;
+    uint32_t t = 0;
+    do {
+        if(SD_SPI_ReadWriteByte(0xFF) == 0xFF) return 0;
+        t++;
+    } while(t &lt; 0xFFFFFF);
+    return 1;
 }
 
-<span class="pl-c">/* 发送命令 */</span>
-<span class="pl-k">static</span> <span class="pl-smi">uint8_t</span> <span class="pl-en">SD_SendCmd</span>(<span class="pl-smi">uint8_t</span> <span class="pl-s1">cmd</span>, <span class="pl-smi">uint32_t</span> <span class="pl-s1">arg</span>, <span class="pl-smi">uint8_t</span> <span class="pl-s1">crc</span>)
+/* 发送命令 */
+static uint8_t SD_SendCmd(uint8_t cmd, uint32_t arg, uint8_t crc)
 {
-    <span class="pl-smi">uint8_t</span> <span class="pl-s1">r1</span>;
-    <span class="pl-smi">uint8_t</span> <span class="pl-s1">retry</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>;
+    uint8_t r1;
+    uint8_t retry = 0;
     
-    <span class="pl-en">SD_CS_HIGH</span>();
-    <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">0xFF</span>);
-    <span class="pl-en">SD_CS_LOW</span>();
+    SD_CS_HIGH();
+    SD_SPI_ReadWriteByte(0xFF);
+    SD_CS_LOW();
     
-    <span class="pl-k">if</span>(<span class="pl-en">SD_WaitReady</span>()) <span class="pl-k">return</span> <span class="pl-c1">0xFF</span>;
+    if(SD_WaitReady()) return 0xFF;
     
-    <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-s1">cmd</span> | <span class="pl-c1">0x40</span>);
-    <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-s1">arg</span> &gt;&gt; <span class="pl-c1">24</span>);
-    <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-s1">arg</span> &gt;&gt; <span class="pl-c1">16</span>);
-    <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-s1">arg</span> &gt;&gt; <span class="pl-c1">8</span>);
-    <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-s1">arg</span>);
-    <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-s1">crc</span>);
+    SD_SPI_ReadWriteByte(cmd | 0x40);
+    SD_SPI_ReadWriteByte(arg &gt;&gt; 24);
+    SD_SPI_ReadWriteByte(arg &gt;&gt; 16);
+    SD_SPI_ReadWriteByte(arg &gt;&gt; 8);
+    SD_SPI_ReadWriteByte(arg);
+    SD_SPI_ReadWriteByte(crc);
     
-    <span class="pl-k">if</span>(<span class="pl-s1">cmd</span> <span class="pl-c1">==</span> <span class="pl-c1">CMD12</span>) <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">0xFF</span>);
+    if(cmd == CMD12) SD_SPI_ReadWriteByte(0xFF);
     
-    <span class="pl-s1">retry</span> <span class="pl-c1">=</span> <span class="pl-c1">0x1F</span>;
-    <span class="pl-k">do</span> {
-        <span class="pl-s1">r1</span> <span class="pl-c1">=</span> <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">0xFF</span>);
-    } <span class="pl-k">while</span>((<span class="pl-s1">r1</span> <span class="pl-c1">&amp;</span> <span class="pl-c1">0x80</span>) <span class="pl-c1">&amp;&amp;</span> <span class="pl-s1">retry</span><span class="pl-c1">--</span>);
+    retry = 0x1F;
+    do {
+        r1 = SD_SPI_ReadWriteByte(0xFF);
+    } while((r1 &amp; 0x80) &amp;&amp; retry--);
     
-    <span class="pl-k">return</span> <span class="pl-s1">r1</span>;
+    return r1;
 }
 
-<span class="pl-c">/* SD卡初始化 */</span>
-<span class="pl-smi">uint8_t</span> <span class="pl-en">SD_Init</span>(<span class="pl-smi">void</span>)
+/* SD卡初始化 */
+uint8_t SD_Init(void)
 {
-    <span class="pl-smi">uint8_t</span> <span class="pl-s1">r1</span>;
-    <span class="pl-smi">uint16_t</span> <span class="pl-s1">retry</span>;
-    <span class="pl-smi">uint8_t</span> <span class="pl-s1">buf</span>[<span class="pl-c1">4</span>];
+    uint8_t r1;
+    uint16_t retry;
+    uint8_t buf[4];
     
-    <span class="pl-en">SD_SPI_SetSpeed</span>(<span class="pl-c1">0</span>);  <span class="pl-c">// 低速模式</span>
+    SD_SPI_SetSpeed(0);  // 低速模式
     
-    <span class="pl-en">SD_CS_HIGH</span>();
-    <span class="pl-k">for</span>(<span class="pl-smi">int</span> <span class="pl-s1">i</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>; <span class="pl-s1">i</span> <span class="pl-c1">&lt;</span> <span class="pl-c1">10</span>; <span class="pl-s1">i</span><span class="pl-c1">++</span>) {
-        <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">0xFF</span>);  <span class="pl-c">// 发送至少74个时钟</span>
+    SD_CS_HIGH();
+    for(int i = 0; i &lt; 10; i++) {
+        SD_SPI_ReadWriteByte(0xFF);  // 发送至少74个时钟
     }
     
-    <span class="pl-s1">retry</span> <span class="pl-c1">=</span> <span class="pl-c1">20</span>;
-    <span class="pl-k">do</span> {
-        <span class="pl-s1">r1</span> <span class="pl-c1">=</span> <span class="pl-en">SD_SendCmd</span>(<span class="pl-c1">CMD0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0x95</span>);
-    } <span class="pl-k">while</span>((<span class="pl-s1">r1</span> <span class="pl-c1">!=</span> <span class="pl-c1">0x01</span>) <span class="pl-c1">&amp;&amp;</span> <span class="pl-s1">retry</span><span class="pl-c1">--</span>);
+    retry = 20;
+    do {
+        r1 = SD_SendCmd(CMD0, 0, 0x95);
+    } while((r1 != 0x01) &amp;&amp; retry--);
     
-    <span class="pl-k">if</span>(<span class="pl-s1">r1</span> <span class="pl-c1">==</span> <span class="pl-c1">0x01</span>) {
-        <span class="pl-k">if</span>(<span class="pl-en">SD_SendCmd</span>(<span class="pl-c1">CMD8</span>, <span class="pl-c1">0x1AA</span>, <span class="pl-c1">0x87</span>) <span class="pl-c1">==</span> <span class="pl-c1">1</span>) {
-            <span class="pl-k">for</span>(<span class="pl-smi">int</span> <span class="pl-s1">i</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>; <span class="pl-s1">i</span> <span class="pl-c1">&lt;</span> <span class="pl-c1">4</span>; <span class="pl-s1">i</span><span class="pl-c1">++</span>) {
-                <span class="pl-s1">buf</span>[<span class="pl-s1">i</span>] <span class="pl-c1">=</span> <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">0xFF</span>);
+    if(r1 == 0x01) {
+        if(SD_SendCmd(CMD8, 0x1AA, 0x87) == 1) {
+            for(int i = 0; i &lt; 4; i++) {
+                buf[i] = SD_SPI_ReadWriteByte(0xFF);
             }
-            <span class="pl-k">if</span>(<span class="pl-s1">buf</span>[<span class="pl-c1">2</span>] <span class="pl-c1">==</span> <span class="pl-c1">0x01</span> <span class="pl-c1">&amp;&amp;</span> <span class="pl-s1">buf</span>[<span class="pl-c1">3</span>] <span class="pl-c1">==</span> <span class="pl-c1">0xAA</span>) {
-                <span class="pl-s1">retry</span> <span class="pl-c1">=</span> <span class="pl-c1">0xFFFE</span>;
-                <span class="pl-k">do</span> {
-                    <span class="pl-en">SD_SendCmd</span>(<span class="pl-c1">CMD55</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0x01</span>);
-                    <span class="pl-s1">r1</span> <span class="pl-c1">=</span> <span class="pl-en">SD_SendCmd</span>(<span class="pl-c1">CMD41</span>, <span class="pl-c1">0x40000000</span>, <span class="pl-c1">0x01</span>);
-                } <span class="pl-k">while</span>(<span class="pl-s1">r1</span> <span class="pl-c1">&amp;&amp;</span> <span class="pl-s1">retry</span><span class="pl-c1">--</span>);
+            if(buf[2] == 0x01 &amp;&amp; buf[3] == 0xAA) {
+                retry = 0xFFFE;
+                do {
+                    SD_SendCmd(CMD55, 0, 0x01);
+                    r1 = SD_SendCmd(CMD41, 0x40000000, 0x01);
+                } while(r1 &amp;&amp; retry--);
                 
-                <span class="pl-k">if</span>(<span class="pl-s1">retry</span> <span class="pl-c1">&amp;&amp;</span> <span class="pl-en">SD_SendCmd</span>(<span class="pl-c1">CMD58</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0x01</span>) <span class="pl-c1">==</span> <span class="pl-c1">0</span>) {
-                    <span class="pl-k">for</span>(<span class="pl-smi">int</span> <span class="pl-s1">i</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>; <span class="pl-s1">i</span> <span class="pl-c1">&lt;</span> <span class="pl-c1">4</span>; <span class="pl-s1">i</span><span class="pl-c1">++</span>) {
-                        <span class="pl-s1">buf</span>[<span class="pl-s1">i</span>] <span class="pl-c1">=</span> <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">0xFF</span>);
+                if(retry &amp;&amp; SD_SendCmd(CMD58, 0, 0x01) == 0) {
+                    for(int i = 0; i &lt; 4; i++) {
+                        buf[i] = SD_SPI_ReadWriteByte(0xFF);
                     }
-                    <span class="pl-k">if</span>(<span class="pl-s1">buf</span>[<span class="pl-c1">0</span>] <span class="pl-c1">&amp;</span> <span class="pl-c1">0x40</span>) {
-                        <span class="pl-s1">SD_Type</span> <span class="pl-c1">=</span> <span class="pl-c1">SD_TYPE_V2HC</span>;
-                    } <span class="pl-k">else</span> {
-                        <span class="pl-s1">SD_Type</span> <span class="pl-c1">=</span> <span class="pl-c1">SD_TYPE_V2</span>;
+                    if(buf[0] &amp; 0x40) {
+                        SD_Type = SD_TYPE_V2HC;
+                    } else {
+                        SD_Type = SD_TYPE_V2;
                     }
                 }
             }
-        } <span class="pl-k">else</span> {
-            <span class="pl-en">SD_SendCmd</span>(<span class="pl-c1">CMD55</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0x01</span>);
-            <span class="pl-s1">r1</span> <span class="pl-c1">=</span> <span class="pl-en">SD_SendCmd</span>(<span class="pl-c1">CMD41</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0x01</span>);
-            <span class="pl-k">if</span>(<span class="pl-s1">r1</span> &lt;= <span class="pl-c1">1</span>) {
-                <span class="pl-s1">SD_Type</span> <span class="pl-c1">=</span> <span class="pl-c1">SD_TYPE_V1</span>;
-                <span class="pl-s1">retry</span> <span class="pl-c1">=</span> <span class="pl-c1">0xFFFE</span>;
-                <span class="pl-k">do</span> {
-                    <span class="pl-en">SD_SendCmd</span>(<span class="pl-c1">CMD55</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0x01</span>);
-                    <span class="pl-s1">r1</span> <span class="pl-c1">=</span> <span class="pl-en">SD_SendCmd</span>(<span class="pl-c1">CMD41</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0x01</span>);
-                } <span class="pl-k">while</span>(<span class="pl-s1">r1</span> <span class="pl-c1">&amp;&amp;</span> <span class="pl-s1">retry</span><span class="pl-c1">--</span>);
-            } <span class="pl-k">else</span> {
-                <span class="pl-s1">SD_Type</span> <span class="pl-c1">=</span> <span class="pl-c1">SD_TYPE_MMC</span>;
-                <span class="pl-s1">retry</span> <span class="pl-c1">=</span> <span class="pl-c1">0xFFFE</span>;
-                <span class="pl-k">do</span> {
-                    <span class="pl-s1">r1</span> <span class="pl-c1">=</span> <span class="pl-en">SD_SendCmd</span>(<span class="pl-c1">CMD1</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0x01</span>);
-                } <span class="pl-k">while</span>(<span class="pl-s1">r1</span> <span class="pl-c1">&amp;&amp;</span> <span class="pl-s1">retry</span><span class="pl-c1">--</span>);
+        } else {
+            SD_SendCmd(CMD55, 0, 0x01);
+            r1 = SD_SendCmd(CMD41, 0, 0x01);
+            if(r1 &lt;= 1) {
+                SD_Type = SD_TYPE_V1;
+                retry = 0xFFFE;
+                do {
+                    SD_SendCmd(CMD55, 0, 0x01);
+                    r1 = SD_SendCmd(CMD41, 0, 0x01);
+                } while(r1 &amp;&amp; retry--);
+            } else {
+                SD_Type = SD_TYPE_MMC;
+                retry = 0xFFFE;
+                do {
+                    r1 = SD_SendCmd(CMD1, 0, 0x01);
+                } while(r1 &amp;&amp; retry--);
             }
-            <span class="pl-k">if</span>(<span class="pl-s1">retry</span> <span class="pl-c1">==</span> <span class="pl-c1">0</span> <span class="pl-c1">||</span> <span class="pl-en">SD_SendCmd</span>(<span class="pl-c1">CMD16</span>, <span class="pl-c1">512</span>, <span class="pl-c1">0x01</span>) <span class="pl-c1">!=</span> <span class="pl-c1">0</span>) {
-                <span class="pl-s1">SD_Type</span> <span class="pl-c1">=</span> <span class="pl-c1">SD_TYPE_ERR</span>;
+            if(retry == 0 || SD_SendCmd(CMD16, 512, 0x01) != 0) {
+                SD_Type = SD_TYPE_ERR;
             }
         }
     }
     
-    <span class="pl-en">SD_CS_HIGH</span>();
-    <span class="pl-en">SD_SPI_SetSpeed</span>(<span class="pl-c1">1</span>);  <span class="pl-c">// 高速模式</span>
+    SD_CS_HIGH();
+    SD_SPI_SetSpeed(1);  // 高速模式
     
-    <span class="pl-k">if</span>(<span class="pl-s1">SD_Type</span>) <span class="pl-k">return</span> <span class="pl-c1">0</span>;
-    <span class="pl-k">return</span> <span class="pl-c1">1</span>;
+    if(SD_Type) return 0;
+    return 1;
 }
 
-<span class="pl-c">/* 读取指定扇区 */</span>
-<span class="pl-smi">uint8_t</span> <span class="pl-en">SD_ReadDisk</span>(<span class="pl-smi">uint8_t</span> <span class="pl-c1">*</span><span class="pl-s1">buf</span>, <span class="pl-smi">uint32_t</span> <span class="pl-s1">sector</span>, <span class="pl-smi">uint8_t</span> <span class="pl-s1">cnt</span>)
+/* 读取指定扇区 */
+uint8_t SD_ReadDisk(uint8_t *buf, uint32_t sector, uint8_t cnt)
 {
-    <span class="pl-smi">uint8_t</span> <span class="pl-s1">r1</span>;
+    uint8_t r1;
     
-    <span class="pl-k">if</span>(<span class="pl-s1">SD_Type</span> <span class="pl-c1">!=</span> <span class="pl-c1">SD_TYPE_V2HC</span>) <span class="pl-s1">sector</span> &lt;&lt;= <span class="pl-c1">9</span>;
+    if(SD_Type != SD_TYPE_V2HC) sector &lt;&lt;= 9;
     
-    <span class="pl-k">if</span>(<span class="pl-s1">cnt</span> <span class="pl-c1">==</span> <span class="pl-c1">1</span>) {
-        <span class="pl-s1">r1</span> <span class="pl-c1">=</span> <span class="pl-en">SD_SendCmd</span>(<span class="pl-c1">CMD17</span>, <span class="pl-s1">sector</span>, <span class="pl-c1">0x01</span>);
-        <span class="pl-k">if</span>(<span class="pl-s1">r1</span> <span class="pl-c1">==</span> <span class="pl-c1">0</span>) {
-            <span class="pl-smi">uint16_t</span> <span class="pl-s1">retry</span> <span class="pl-c1">=</span> <span class="pl-c1">0xFFFE</span>;
-            <span class="pl-k">do</span> {
-                <span class="pl-s1">r1</span> <span class="pl-c1">=</span> <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">0xFF</span>);
-                <span class="pl-k">if</span>(<span class="pl-s1">r1</span> <span class="pl-c1">==</span> <span class="pl-c1">0xFE</span>) <span class="pl-k">break</span>;
-            } <span class="pl-k">while</span>(<span class="pl-s1">retry</span><span class="pl-c1">--</span>);
+    if(cnt == 1) {
+        r1 = SD_SendCmd(CMD17, sector, 0x01);
+        if(r1 == 0) {
+            uint16_t retry = 0xFFFE;
+            do {
+                r1 = SD_SPI_ReadWriteByte(0xFF);
+                if(r1 == 0xFE) break;
+            } while(retry--);
             
-            <span class="pl-k">if</span>(<span class="pl-s1">r1</span> <span class="pl-c1">==</span> <span class="pl-c1">0xFE</span>) {
-                <span class="pl-k">for</span>(<span class="pl-smi">int</span> <span class="pl-s1">i</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>; <span class="pl-s1">i</span> <span class="pl-c1">&lt;</span> <span class="pl-c1">512</span>; <span class="pl-s1">i</span><span class="pl-c1">++</span>) {
-                    <span class="pl-s1">buf</span>[<span class="pl-s1">i</span>] <span class="pl-c1">=</span> <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">0xFF</span>);
+            if(r1 == 0xFE) {
+                for(int i = 0; i &lt; 512; i++) {
+                    buf[i] = SD_SPI_ReadWriteByte(0xFF);
                 }
-                <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">0xFF</span>);
-                <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">0xFF</span>);
-                <span class="pl-s1">r1</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>;
-            } <span class="pl-k">else</span> {
-                <span class="pl-s1">r1</span> <span class="pl-c1">=</span> <span class="pl-c1">1</span>;
+                SD_SPI_ReadWriteByte(0xFF);
+                SD_SPI_ReadWriteByte(0xFF);
+                r1 = 0;
+            } else {
+                r1 = 1;
             }
         }
-    } <span class="pl-k">else</span> {
-        <span class="pl-s1">r1</span> <span class="pl-c1">=</span> <span class="pl-en">SD_SendCmd</span>(<span class="pl-c1">CMD18</span>, <span class="pl-s1">sector</span>, <span class="pl-c1">0x01</span>);
-        <span class="pl-k">if</span>(<span class="pl-s1">r1</span> <span class="pl-c1">==</span> <span class="pl-c1">0</span>) {
-            <span class="pl-k">do</span> {
-                <span class="pl-smi">uint16_t</span> <span class="pl-s1">retry</span> <span class="pl-c1">=</span> <span class="pl-c1">0xFFFE</span>;
-                <span class="pl-k">do</span> {
-                    <span class="pl-s1">r1</span> <span class="pl-c1">=</span> <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">0xFF</span>);
-                    <span class="pl-k">if</span>(<span class="pl-s1">r1</span> <span class="pl-c1">==</span> <span class="pl-c1">0xFE</span>) <span class="pl-k">break</span>;
-                } <span class="pl-k">while</span>(<span class="pl-s1">retry</span><span class="pl-c1">--</span>);
+    } else {
+        r1 = SD_SendCmd(CMD18, sector, 0x01);
+        if(r1 == 0) {
+            do {
+                uint16_t retry = 0xFFFE;
+                do {
+                    r1 = SD_SPI_ReadWriteByte(0xFF);
+                    if(r1 == 0xFE) break;
+                } while(retry--);
                 
-                <span class="pl-k">if</span>(<span class="pl-s1">r1</span> <span class="pl-c1">!=</span> <span class="pl-c1">0xFE</span>) <span class="pl-k">break</span>;
+                if(r1 != 0xFE) break;
                 
-                <span class="pl-k">for</span>(<span class="pl-smi">int</span> <span class="pl-s1">i</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>; <span class="pl-s1">i</span> <span class="pl-c1">&lt;</span> <span class="pl-c1">512</span>; <span class="pl-s1">i</span><span class="pl-c1">++</span>) {
-                    <span class="pl-c1">*</span><span class="pl-s1">buf</span><span class="pl-c1">++</span> <span class="pl-c1">=</span> <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">0xFF</span>);
+                for(int i = 0; i &lt; 512; i++) {
+                    *buf++ = SD_SPI_ReadWriteByte(0xFF);
                 }
-                <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">0xFF</span>);
-                <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">0xFF</span>);
-            } <span class="pl-k">while</span>(<span class="pl-c1">--</span><span class="pl-s1">cnt</span>);
-            <span class="pl-en">SD_SendCmd</span>(<span class="pl-c1">CMD12</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0x01</span>);
+                SD_SPI_ReadWriteByte(0xFF);
+                SD_SPI_ReadWriteByte(0xFF);
+            } while(--cnt);
+            SD_SendCmd(CMD12, 0, 0x01);
         }
-        <span class="pl-s1">r1</span> <span class="pl-c1">=</span> <span class="pl-s1">cnt</span> ? <span class="pl-c1">1</span> : <span class="pl-c1">0</span>;
+        r1 = cnt ? 1 : 0;
     }
     
-    <span class="pl-en">SD_CS_HIGH</span>();
-    <span class="pl-k">return</span> <span class="pl-s1">r1</span>;
+    SD_CS_HIGH();
+    return r1;
 }
 
-<span class="pl-c">/* 写入指定扇区 */</span>
-<span class="pl-smi">uint8_t</span> <span class="pl-en">SD_WriteDisk</span>(<span class="pl-smi">uint8_t</span> <span class="pl-c1">*</span><span class="pl-s1">buf</span>, <span class="pl-smi">uint32_t</span> <span class="pl-s1">sector</span>, <span class="pl-smi">uint8_t</span> <span class="pl-s1">cnt</span>)
+/* 写入指定扇区 */
+uint8_t SD_WriteDisk(uint8_t *buf, uint32_t sector, uint8_t cnt)
 {
-    <span class="pl-smi">uint8_t</span> <span class="pl-s1">r1</span>;
+    uint8_t r1;
     
-    <span class="pl-k">if</span>(<span class="pl-s1">SD_Type</span> <span class="pl-c1">!=</span> <span class="pl-c1">SD_TYPE_V2HC</span>) <span class="pl-s1">sector</span> &lt;&lt;= <span class="pl-c1">9</span>;
+    if(SD_Type != SD_TYPE_V2HC) sector &lt;&lt;= 9;
     
-    <span class="pl-k">if</span>(<span class="pl-s1">cnt</span> <span class="pl-c1">==</span> <span class="pl-c1">1</span>) {
-        <span class="pl-s1">r1</span> <span class="pl-c1">=</span> <span class="pl-en">SD_SendCmd</span>(<span class="pl-c1">CMD24</span>, <span class="pl-s1">sector</span>, <span class="pl-c1">0x01</span>);
-        <span class="pl-k">if</span>(<span class="pl-s1">r1</span> <span class="pl-c1">==</span> <span class="pl-c1">0</span>) {
-            <span class="pl-k">if</span>(<span class="pl-en">SD_WaitReady</span>() <span class="pl-c1">==</span> <span class="pl-c1">0</span>) {
-                <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">0xFE</span>);
-                <span class="pl-k">for</span>(<span class="pl-smi">int</span> <span class="pl-s1">i</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>; <span class="pl-s1">i</span> <span class="pl-c1">&lt;</span> <span class="pl-c1">512</span>; <span class="pl-s1">i</span><span class="pl-c1">++</span>) {
-                    <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-s1">buf</span>[<span class="pl-s1">i</span>]);
+    if(cnt == 1) {
+        r1 = SD_SendCmd(CMD24, sector, 0x01);
+        if(r1 == 0) {
+            if(SD_WaitReady() == 0) {
+                SD_SPI_ReadWriteByte(0xFE);
+                for(int i = 0; i &lt; 512; i++) {
+                    SD_SPI_ReadWriteByte(buf[i]);
                 }
-                <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">0xFF</span>);
-                <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">0xFF</span>);
+                SD_SPI_ReadWriteByte(0xFF);
+                SD_SPI_ReadWriteByte(0xFF);
                 
-                <span class="pl-s1">r1</span> <span class="pl-c1">=</span> <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">0xFF</span>);
-                <span class="pl-k">if</span>((<span class="pl-s1">r1</span> <span class="pl-c1">&amp;</span> <span class="pl-c1">0x1F</span>) <span class="pl-c1">==</span> <span class="pl-c1">0x05</span>) {
-                    <span class="pl-s1">r1</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>;
-                    <span class="pl-smi">uint32_t</span> <span class="pl-s1">retry</span> <span class="pl-c1">=</span> <span class="pl-c1">0xFFFFFF</span>;
-                    <span class="pl-k">while</span>(<span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">0xFF</span>) <span class="pl-c1">==</span> <span class="pl-c1">0</span> <span class="pl-c1">&amp;&amp;</span> <span class="pl-s1">retry</span><span class="pl-c1">--</span>);
-                    <span class="pl-k">if</span>(<span class="pl-s1">retry</span> <span class="pl-c1">==</span> <span class="pl-c1">0</span>) <span class="pl-s1">r1</span> <span class="pl-c1">=</span> <span class="pl-c1">1</span>;
-                } <span class="pl-k">else</span> {
-                    <span class="pl-s1">r1</span> <span class="pl-c1">=</span> <span class="pl-c1">1</span>;
+                r1 = SD_SPI_ReadWriteByte(0xFF);
+                if((r1 &amp; 0x1F) == 0x05) {
+                    r1 = 0;
+                    uint32_t retry = 0xFFFFFF;
+                    while(SD_SPI_ReadWriteByte(0xFF) == 0 &amp;&amp; retry--);
+                    if(retry == 0) r1 = 1;
+                } else {
+                    r1 = 1;
                 }
-            } <span class="pl-k">else</span> {
-                <span class="pl-s1">r1</span> <span class="pl-c1">=</span> <span class="pl-c1">1</span>;
+            } else {
+                r1 = 1;
             }
         }
-    } <span class="pl-k">else</span> {
-        <span class="pl-k">if</span>(<span class="pl-s1">SD_Type</span> <span class="pl-c1">!=</span> <span class="pl-c1">SD_TYPE_MMC</span>) {
-            <span class="pl-en">SD_SendCmd</span>(<span class="pl-c1">CMD55</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0x01</span>);
-            <span class="pl-en">SD_SendCmd</span>(<span class="pl-c1">CMD23</span>, <span class="pl-s1">cnt</span>, <span class="pl-c1">0x01</span>);
+    } else {
+        if(SD_Type != SD_TYPE_MMC) {
+            SD_SendCmd(CMD55, 0, 0x01);
+            SD_SendCmd(CMD23, cnt, 0x01);
         }
-        <span class="pl-s1">r1</span> <span class="pl-c1">=</span> <span class="pl-en">SD_SendCmd</span>(<span class="pl-c1">CMD25</span>, <span class="pl-s1">sector</span>, <span class="pl-c1">0x01</span>);
-        <span class="pl-k">if</span>(<span class="pl-s1">r1</span> <span class="pl-c1">==</span> <span class="pl-c1">0</span>) {
-            <span class="pl-k">do</span> {
-                <span class="pl-k">if</span>(<span class="pl-en">SD_WaitReady</span>()) { <span class="pl-s1">r1</span> <span class="pl-c1">=</span> <span class="pl-c1">1</span>; <span class="pl-k">break</span>; }
-                <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">0xFC</span>);
-                <span class="pl-k">for</span>(<span class="pl-smi">int</span> <span class="pl-s1">i</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>; <span class="pl-s1">i</span> <span class="pl-c1">&lt;</span> <span class="pl-c1">512</span>; <span class="pl-s1">i</span><span class="pl-c1">++</span>) {
-                    <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">*</span><span class="pl-s1">buf</span><span class="pl-c1">++</span>);
+        r1 = SD_SendCmd(CMD25, sector, 0x01);
+        if(r1 == 0) {
+            do {
+                if(SD_WaitReady()) { r1 = 1; break; }
+                SD_SPI_ReadWriteByte(0xFC);
+                for(int i = 0; i &lt; 512; i++) {
+                    SD_SPI_ReadWriteByte(*buf++);
                 }
-                <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">0xFF</span>);
-                <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">0xFF</span>);
+                SD_SPI_ReadWriteByte(0xFF);
+                SD_SPI_ReadWriteByte(0xFF);
                 
-                <span class="pl-s1">r1</span> <span class="pl-c1">=</span> <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">0xFF</span>);
-                <span class="pl-k">if</span>((<span class="pl-s1">r1</span> <span class="pl-c1">&amp;</span> <span class="pl-c1">0x1F</span>) <span class="pl-c1">!=</span> <span class="pl-c1">0x05</span>) { <span class="pl-s1">r1</span> <span class="pl-c1">=</span> <span class="pl-c1">1</span>; <span class="pl-k">break</span>; }
-            } <span class="pl-k">while</span>(<span class="pl-c1">--</span><span class="pl-s1">cnt</span>);
+                r1 = SD_SPI_ReadWriteByte(0xFF);
+                if((r1 &amp; 0x1F) != 0x05) { r1 = 1; break; }
+            } while(--cnt);
             
-            <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">0xFD</span>);
-            <span class="pl-s1">r1</span> <span class="pl-c1">=</span> <span class="pl-s1">cnt</span> ? <span class="pl-c1">1</span> : <span class="pl-c1">0</span>;
+            SD_SPI_ReadWriteByte(0xFD);
+            r1 = cnt ? 1 : 0;
         }
     }
     
-    <span class="pl-en">SD_CS_HIGH</span>();
-    <span class="pl-k">return</span> <span class="pl-s1">r1</span>;
+    SD_CS_HIGH();
+    return r1;
 }
 
-<span class="pl-c">/* 获取扇区数量 */</span>
-<span class="pl-smi">uint32_t</span> <span class="pl-en">SD_GetSectorCount</span>(<span class="pl-smi">void</span>)
+/* 获取扇区数量 */
+uint32_t SD_GetSectorCount(void)
 {
-    <span class="pl-smi">uint8_t</span> <span class="pl-s1">csd</span>[<span class="pl-c1">16</span>];
-    <span class="pl-smi">uint32_t</span> <span class="pl-s1">capacity</span>;
-    <span class="pl-smi">uint8_t</span> <span class="pl-s1">n</span>;
-    <span class="pl-smi">uint16_t</span> <span class="pl-s1">csize</span>;
+    uint8_t csd[16];
+    uint32_t capacity;
+    uint8_t n;
+    uint16_t csize;
     
-    <span class="pl-k">if</span>(<span class="pl-en">SD_SendCmd</span>(<span class="pl-c1">CMD9</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0x01</span>) <span class="pl-c1">==</span> <span class="pl-c1">0</span>) {
-        <span class="pl-smi">uint16_t</span> <span class="pl-s1">retry</span> <span class="pl-c1">=</span> <span class="pl-c1">0xFFFE</span>;
-        <span class="pl-k">while</span>(<span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">0xFF</span>) <span class="pl-c1">!=</span> <span class="pl-c1">0xFE</span> <span class="pl-c1">&amp;&amp;</span> <span class="pl-s1">retry</span><span class="pl-c1">--</span>);
+    if(SD_SendCmd(CMD9, 0, 0x01) == 0) {
+        uint16_t retry = 0xFFFE;
+        while(SD_SPI_ReadWriteByte(0xFF) != 0xFE &amp;&amp; retry--);
         
-        <span class="pl-k">if</span>(<span class="pl-s1">retry</span>) {
-            <span class="pl-k">for</span>(<span class="pl-smi">int</span> <span class="pl-s1">i</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>; <span class="pl-s1">i</span> <span class="pl-c1">&lt;</span> <span class="pl-c1">16</span>; <span class="pl-s1">i</span><span class="pl-c1">++</span>) {
-                <span class="pl-s1">csd</span>[<span class="pl-s1">i</span>] <span class="pl-c1">=</span> <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">0xFF</span>);
+        if(retry) {
+            for(int i = 0; i &lt; 16; i++) {
+                csd[i] = SD_SPI_ReadWriteByte(0xFF);
             }
-            <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">0xFF</span>);
-            <span class="pl-en">SD_SPI_ReadWriteByte</span>(<span class="pl-c1">0xFF</span>);
+            SD_SPI_ReadWriteByte(0xFF);
+            SD_SPI_ReadWriteByte(0xFF);
             
-            <span class="pl-k">if</span>((<span class="pl-s1">csd</span>[<span class="pl-c1">0</span>] <span class="pl-c1">&amp;</span> <span class="pl-c1">0xC0</span>) <span class="pl-c1">==</span> <span class="pl-c1">0x40</span>) {  <span class="pl-c">// V2.0</span>
-                <span class="pl-s1">csize</span> <span class="pl-c1">=</span> <span class="pl-s1">csd</span>[<span class="pl-c1">9</span>] <span class="pl-c1">+</span> ((<span class="pl-smi">uint16_t</span>)<span class="pl-s1">csd</span>[<span class="pl-c1">8</span>] &lt;&lt; <span class="pl-c1">8</span>) <span class="pl-c1">+</span> ((<span class="pl-smi">uint32_t</span>)(<span class="pl-s1">csd</span>[<span class="pl-c1">7</span>] <span class="pl-c1">&amp;</span> <span class="pl-c1">0x3F</span>) &lt;&lt; <span class="pl-c1">16</span>) <span class="pl-c1">+</span> <span class="pl-c1">1</span>;
-                <span class="pl-s1">capacity</span> <span class="pl-c1">=</span> <span class="pl-s1">csize</span> &lt;&lt; <span class="pl-c1">10</span>;
-            } <span class="pl-k">else</span> {  <span class="pl-c">// V1.0</span>
-                <span class="pl-s1">n</span> <span class="pl-c1">=</span> (<span class="pl-s1">csd</span>[<span class="pl-c1">5</span>] <span class="pl-c1">&amp;</span> <span class="pl-c1">0x0F</span>) <span class="pl-c1">+</span> ((<span class="pl-s1">csd</span>[<span class="pl-c1">10</span>] <span class="pl-c1">&amp;</span> <span class="pl-c1">0x80</span>) &gt;&gt; <span class="pl-c1">7</span>) <span class="pl-c1">+</span> ((<span class="pl-s1">csd</span>[<span class="pl-c1">9</span>] <span class="pl-c1">&amp;</span> <span class="pl-c1">0x03</span>) &lt;&lt; <span class="pl-c1">1</span>) <span class="pl-c1">+</span> <span class="pl-c1">2</span>;
-                <span class="pl-s1">csize</span> <span class="pl-c1">=</span> (<span class="pl-s1">csd</span>[<span class="pl-c1">8</span>] &gt;&gt; <span class="pl-c1">6</span>) <span class="pl-c1">+</span> ((<span class="pl-smi">uint16_t</span>)<span class="pl-s1">csd</span>[<span class="pl-c1">7</span>] &lt;&lt; <span class="pl-c1">2</span>) <span class="pl-c1">+</span> ((<span class="pl-smi">uint16_t</span>)(<span class="pl-s1">csd</span>[<span class="pl-c1">6</span>] <span class="pl-c1">&amp;</span> <span class="pl-c1">0x03</span>) &lt;&lt; <span class="pl-c1">10</span>) <span class="pl-c1">+</span> <span class="pl-c1">1</span>;
-                <span class="pl-s1">capacity</span> <span class="pl-c1">=</span> (<span class="pl-smi">uint32_t</span>)<span class="pl-s1">csize</span> &lt;&lt; (<span class="pl-s1">n</span> <span class="pl-c1">-</span> <span class="pl-c1">9</span>);
+            if((csd[0] &amp; 0xC0) == 0x40) {  // V2.0
+                csize = csd[9] + ((uint16_t)csd[8] &lt;&lt; 8) + ((uint32_t)(csd[7] &amp; 0x3F) &lt;&lt; 16) + 1;
+                capacity = csize &lt;&lt; 10;
+            } else {  // V1.0
+                n = (csd[5] &amp; 0x0F) + ((csd[10] &amp; 0x80) &gt;&gt; 7) + ((csd[9] &amp; 0x03) &lt;&lt; 1) + 2;
+                csize = (csd[8] &gt;&gt; 6) + ((uint16_t)csd[7] &lt;&lt; 2) + ((uint16_t)(csd[6] &amp; 0x03) &lt;&lt; 10) + 1;
+                capacity = (uint32_t)csize &lt;&lt; (n - 9);
             }
-            <span class="pl-en">SD_CS_HIGH</span>();
-            <span class="pl-k">return</span> <span class="pl-s1">capacity</span>;
+            SD_CS_HIGH();
+            return capacity;
         }
     }
-    <span class="pl-en">SD_CS_HIGH</span>();
-    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
-}</pre></div>
+    SD_CS_HIGH();
+    return 0;
+}
+
+</code></pre>
 <h4>3.3 user_diskio.c</h4>
-<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-c">/* USER CODE BEGIN Header */</span>
-<span class="pl-c">/**</span>
-<span class="pl-c"> ******************************************************************************</span>
-<span class="pl-c">  * @file    user_diskio.c</span>
-<span class="pl-c">  * @brief   This file includes a diskio driver skeleton to be completed by the user.</span>
-<span class="pl-c">  ******************************************************************************</span>
-<span class="pl-c">  * @attention</span>
-<span class="pl-c">  *</span>
-<span class="pl-c">  * Copyright (c) 2026 STMicroelectronics.</span>
-<span class="pl-c">  * All rights reserved.</span>
-<span class="pl-c">  *</span>
-<span class="pl-c">  * This software is licensed under terms that can be found in the LICENSE file</span>
-<span class="pl-c">  * in the root directory of this software component.</span>
-<span class="pl-c">  * If no LICENSE file comes with this software, it is provided AS-IS.</span>
-<span class="pl-c">  *</span>
-<span class="pl-c">  ******************************************************************************</span>
-<span class="pl-c">  */</span>
- <span class="pl-c">/* USER CODE END Header */</span>
+<pre lang="c" class="notranslate"><code class="notranslate">/* USER CODE BEGIN Header */
+/**
+ ******************************************************************************
+  * @file    user_diskio.c
+  * @brief   This file includes a diskio driver skeleton to be completed by the user.
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2026 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
+ /* USER CODE END Header */
 
-<span class="pl-k">#ifdef</span> <span class="pl-c1">USE_OBSOLETE_USER_CODE_SECTION_0</span>
-<span class="pl-c">/*</span>
-<span class="pl-c"> * Warning: the user section 0 is no more in use (starting from CubeMx version 4.16.0)</span>
-<span class="pl-c"> * To be suppressed in the future.</span>
-<span class="pl-c"> * Kept to ensure backward compatibility with previous CubeMx versions when</span>
-<span class="pl-c"> * migrating projects.</span>
-<span class="pl-c"> * User code previously added there should be copied in the new user sections before</span>
-<span class="pl-c"> * the section contents can be deleted.</span>
-<span class="pl-c"> */</span>
-<span class="pl-c">/* USER CODE BEGIN 0 */</span>
-<span class="pl-c">/* USER CODE END 0 */</span>
-<span class="pl-k">#endif</span>
+#ifdef USE_OBSOLETE_USER_CODE_SECTION_0
+/*
+ * Warning: the user section 0 is no more in use (starting from CubeMx version 4.16.0)
+ * To be suppressed in the future.
+ * Kept to ensure backward compatibility with previous CubeMx versions when
+ * migrating projects.
+ * User code previously added there should be copied in the new user sections before
+ * the section contents can be deleted.
+ */
+/* USER CODE BEGIN 0 */
+/* USER CODE END 0 */
+#endif
 
-<span class="pl-c">/* USER CODE BEGIN DECL */</span>
+/* USER CODE BEGIN DECL */
 
-<span class="pl-c">/* Includes ------------------------------------------------------------------*/</span>
-<span class="pl-k">#include</span> <span class="pl-s">&lt;string.h&gt;</span>
-<span class="pl-k">#include</span> <span class="pl-s">"ff_gen_drv.h"</span>
+/* Includes ------------------------------------------------------------------*/
+#include &lt;string.h&gt;
+#include "ff_gen_drv.h"
 
 
-<span class="pl-k">#include</span> <span class="pl-s">"sd_spi.h"</span>
-<span class="pl-c">/* Private typedef -----------------------------------------------------------*/</span>
-<span class="pl-c">/* Private define ------------------------------------------------------------*/</span>
+#include "sd_spi.h"
+/* Private typedef -----------------------------------------------------------*/
+/* Private define ------------------------------------------------------------*/
 
-<span class="pl-c">/* Private variables ---------------------------------------------------------*/</span>
-<span class="pl-c">/* Disk status */</span>
-<span class="pl-k">static</span> <span class="pl-k">volatile</span> <span class="pl-smi">DSTATUS</span> <span class="pl-s1">Stat</span> <span class="pl-c1">=</span> <span class="pl-c1">STA_NOINIT</span>;
+/* Private variables ---------------------------------------------------------*/
+/* Disk status */
+static volatile DSTATUS Stat = STA_NOINIT;
 
-<span class="pl-c">/* USER CODE END DECL */</span>
+/* USER CODE END DECL */
 
-<span class="pl-c">/* Private function prototypes -----------------------------------------------*/</span>
-<span class="pl-smi">DSTATUS</span> <span class="pl-en">USER_initialize</span> (<span class="pl-smi">BYTE</span> <span class="pl-s1">pdrv</span>);
-<span class="pl-smi">DSTATUS</span> <span class="pl-en">USER_status</span> (<span class="pl-smi">BYTE</span> <span class="pl-s1">pdrv</span>);
-<span class="pl-smi">DRESULT</span> <span class="pl-en">USER_read</span> (<span class="pl-smi">BYTE</span> <span class="pl-s1">pdrv</span>, <span class="pl-smi">BYTE</span> <span class="pl-c1">*</span><span class="pl-s1">buff</span>, <span class="pl-smi">DWORD</span> <span class="pl-s1">sector</span>, <span class="pl-smi">UINT</span> <span class="pl-s1">count</span>);
-<span class="pl-k">#if</span> <span class="pl-s1">_USE_WRITE</span> <span class="pl-c1">==</span> <span class="pl-c1">1</span>
-  <span class="pl-smi">DRESULT</span> <span class="pl-en">USER_write</span> (<span class="pl-smi">BYTE</span> <span class="pl-s1">pdrv</span>, <span class="pl-k">const</span> <span class="pl-smi">BYTE</span> <span class="pl-c1">*</span><span class="pl-s1">buff</span>, <span class="pl-smi">DWORD</span> <span class="pl-s1">sector</span>, <span class="pl-smi">UINT</span> <span class="pl-s1">count</span>);
-<span class="pl-k">#endif</span> <span class="pl-c">/* _USE_WRITE == 1 */</span>
-<span class="pl-k">#if</span> <span class="pl-s1">_USE_IOCTL</span> <span class="pl-c1">==</span> <span class="pl-c1">1</span>
-  <span class="pl-smi">DRESULT</span> <span class="pl-en">USER_ioctl</span> (<span class="pl-smi">BYTE</span> <span class="pl-s1">pdrv</span>, <span class="pl-smi">BYTE</span> <span class="pl-s1">cmd</span>, <span class="pl-smi">void</span> <span class="pl-c1">*</span><span class="pl-s1">buff</span>);
-<span class="pl-k">#endif</span> <span class="pl-c">/* _USE_IOCTL == 1 */</span>
+/* Private function prototypes -----------------------------------------------*/
+DSTATUS USER_initialize (BYTE pdrv);
+DSTATUS USER_status (BYTE pdrv);
+DRESULT USER_read (BYTE pdrv, BYTE *buff, DWORD sector, UINT count);
+#if _USE_WRITE == 1
+  DRESULT USER_write (BYTE pdrv, const BYTE *buff, DWORD sector, UINT count);
+#endif /* _USE_WRITE == 1 */
+#if _USE_IOCTL == 1
+  DRESULT USER_ioctl (BYTE pdrv, BYTE cmd, void *buff);
+#endif /* _USE_IOCTL == 1 */
 
-<span class="pl-smi">Diskio_drvTypeDef</span>  <span class="pl-s1">USER_Driver</span> <span class="pl-c1">=</span>
+Diskio_drvTypeDef  USER_Driver =
 {
-  <span class="pl-s1">USER_initialize</span>,
-  <span class="pl-s1">USER_status</span>,
-  <span class="pl-s1">USER_read</span>,
-<span class="pl-k">#if</span>  <span class="pl-s1">_USE_WRITE</span>
-  <span class="pl-s1">USER_write</span>,
-<span class="pl-k">#endif</span>  <span class="pl-c">/* _USE_WRITE == 1 */</span>
-<span class="pl-k">#if</span>  <span class="pl-s1">_USE_IOCTL</span> <span class="pl-c1">==</span> <span class="pl-c1">1</span>
-  <span class="pl-s1">USER_ioctl</span>,
-<span class="pl-k">#endif</span> <span class="pl-c">/* _USE_IOCTL == 1 */</span>
+  USER_initialize,
+  USER_status,
+  USER_read,
+#if  _USE_WRITE
+  USER_write,
+#endif  /* _USE_WRITE == 1 */
+#if  _USE_IOCTL == 1
+  USER_ioctl,
+#endif /* _USE_IOCTL == 1 */
 };
 
-<span class="pl-c">/* Private functions ---------------------------------------------------------*/</span>
+/* Private functions ---------------------------------------------------------*/
 
-<span class="pl-c">/**</span>
-<span class="pl-c">  * @brief  Initializes a Drive</span>
-<span class="pl-c">  * @param  pdrv: Physical drive number (0..)</span>
-<span class="pl-c">  * @retval DSTATUS: Operation status</span>
-<span class="pl-c">  */</span>
-<span class="pl-smi">DSTATUS</span> <span class="pl-en">USER_initialize</span> (
-	<span class="pl-smi">BYTE</span> <span class="pl-s1">pdrv</span>           <span class="pl-c">/* Physical drive nmuber to identify the drive */</span>
+/**
+  * @brief  Initializes a Drive
+  * @param  pdrv: Physical drive number (0..)
+  * @retval DSTATUS: Operation status
+  */
+DSTATUS USER_initialize (
+	BYTE pdrv           /* Physical drive nmuber to identify the drive */
 )
 {
-  <span class="pl-c">/* USER CODE BEGIN INIT */</span>
-<span class="pl-c">//    Stat = STA_NOINIT;</span>
-<span class="pl-c">//    return Stat;</span>
-		<span class="pl-smi">uint8_t</span> <span class="pl-s1">res</span>;
-    <span class="pl-s1">res</span> <span class="pl-c1">=</span> <span class="pl-en">SD_Init</span>();
-    <span class="pl-k">if</span>(<span class="pl-s1">res</span> <span class="pl-c1">==</span> <span class="pl-c1">0</span>) {
-        <span class="pl-s1">Stat</span> &amp;= ~<span class="pl-c1">STA_NOINIT</span>;
-    } <span class="pl-k">else</span> {
-        <span class="pl-s1">Stat</span> <span class="pl-c1">=</span> <span class="pl-c1">STA_NOINIT</span>;
+  /* USER CODE BEGIN INIT */
+//    Stat = STA_NOINIT;
+//    return Stat;
+		uint8_t res;
+    res = SD_Init();
+    if(res == 0) {
+        Stat &amp;= ~STA_NOINIT;
+    } else {
+        Stat = STA_NOINIT;
     }
-    <span class="pl-k">return</span> <span class="pl-s1">Stat</span>;
-  <span class="pl-c">/* USER CODE END INIT */</span>
+    return Stat;
+  /* USER CODE END INIT */
 }
 
-<span class="pl-c">/**</span>
-<span class="pl-c">  * @brief  Gets Disk Status</span>
-<span class="pl-c">  * @param  pdrv: Physical drive number (0..)</span>
-<span class="pl-c">  * @retval DSTATUS: Operation status</span>
-<span class="pl-c">  */</span>
-<span class="pl-smi">DSTATUS</span> <span class="pl-en">USER_status</span> (
-	<span class="pl-smi">BYTE</span> <span class="pl-s1">pdrv</span>       <span class="pl-c">/* Physical drive number to identify the drive */</span>
+/**
+  * @brief  Gets Disk Status
+  * @param  pdrv: Physical drive number (0..)
+  * @retval DSTATUS: Operation status
+  */
+DSTATUS USER_status (
+	BYTE pdrv       /* Physical drive number to identify the drive */
 )
 {
-  <span class="pl-c">/* USER CODE BEGIN STATUS */</span>
-<span class="pl-c">//    Stat = STA_NOINIT;</span>
-<span class="pl-c">//    return Stat;</span>
-		<span class="pl-k">return</span> <span class="pl-s1">Stat</span>;
-  <span class="pl-c">/* USER CODE END STATUS */</span>
+  /* USER CODE BEGIN STATUS */
+//    Stat = STA_NOINIT;
+//    return Stat;
+		return Stat;
+  /* USER CODE END STATUS */
 }
 
-<span class="pl-c">/**</span>
-<span class="pl-c">  * @brief  Reads Sector(s)</span>
-<span class="pl-c">  * @param  pdrv: Physical drive number (0..)</span>
-<span class="pl-c">  * @param  *buff: Data buffer to store read data</span>
-<span class="pl-c">  * @param  sector: Sector address (LBA)</span>
-<span class="pl-c">  * @param  count: Number of sectors to read (1..128)</span>
-<span class="pl-c">  * @retval DRESULT: Operation result</span>
-<span class="pl-c">  */</span>
-<span class="pl-smi">DRESULT</span> <span class="pl-en">USER_read</span> (
-	<span class="pl-smi">BYTE</span> <span class="pl-s1">pdrv</span>,      <span class="pl-c">/* Physical drive nmuber to identify the drive */</span>
-	<span class="pl-smi">BYTE</span> <span class="pl-c1">*</span><span class="pl-s1">buff</span>,     <span class="pl-c">/* Data buffer to store read data */</span>
-	<span class="pl-smi">DWORD</span> <span class="pl-s1">sector</span>,   <span class="pl-c">/* Sector address in LBA */</span>
-	<span class="pl-smi">UINT</span> <span class="pl-s1">count</span>      <span class="pl-c">/* Number of sectors to read */</span>
+/**
+  * @brief  Reads Sector(s)
+  * @param  pdrv: Physical drive number (0..)
+  * @param  *buff: Data buffer to store read data
+  * @param  sector: Sector address (LBA)
+  * @param  count: Number of sectors to read (1..128)
+  * @retval DRESULT: Operation result
+  */
+DRESULT USER_read (
+	BYTE pdrv,      /* Physical drive nmuber to identify the drive */
+	BYTE *buff,     /* Data buffer to store read data */
+	DWORD sector,   /* Sector address in LBA */
+	UINT count      /* Number of sectors to read */
 )
 {
-  <span class="pl-c">/* USER CODE BEGIN READ */</span>
-<span class="pl-c">//    return RES_OK;</span>
-    <span class="pl-smi">uint8_t</span> <span class="pl-s1">res</span>;
-    <span class="pl-s1">res</span> <span class="pl-c1">=</span> <span class="pl-en">SD_ReadDisk</span>(<span class="pl-s1">buff</span>, <span class="pl-s1">sector</span>, <span class="pl-s1">count</span>);
-    <span class="pl-k">if</span>(<span class="pl-s1">res</span> <span class="pl-c1">==</span> <span class="pl-c1">0</span>) {
-        <span class="pl-k">return</span> <span class="pl-c1">RES_OK</span>;
+  /* USER CODE BEGIN READ */
+//    return RES_OK;
+    uint8_t res;
+    res = SD_ReadDisk(buff, sector, count);
+    if(res == 0) {
+        return RES_OK;
     }
-    <span class="pl-k">return</span> <span class="pl-c1">RES_ERROR</span>;
-  <span class="pl-c">/* USER CODE END READ */</span>
+    return RES_ERROR;
+  /* USER CODE END READ */
 }
 
-<span class="pl-c">/**</span>
-<span class="pl-c">  * @brief  Writes Sector(s)</span>
-<span class="pl-c">  * @param  pdrv: Physical drive number (0..)</span>
-<span class="pl-c">  * @param  *buff: Data to be written</span>
-<span class="pl-c">  * @param  sector: Sector address (LBA)</span>
-<span class="pl-c">  * @param  count: Number of sectors to write (1..128)</span>
-<span class="pl-c">  * @retval DRESULT: Operation result</span>
-<span class="pl-c">  */</span>
-<span class="pl-k">#if</span> <span class="pl-s1">_USE_WRITE</span> <span class="pl-c1">==</span> <span class="pl-c1">1</span>
-<span class="pl-smi">DRESULT</span> <span class="pl-en">USER_write</span> (
-	<span class="pl-smi">BYTE</span> <span class="pl-s1">pdrv</span>,          <span class="pl-c">/* Physical drive nmuber to identify the drive */</span>
-	<span class="pl-k">const</span> <span class="pl-smi">BYTE</span> <span class="pl-c1">*</span><span class="pl-s1">buff</span>,   <span class="pl-c">/* Data to be written */</span>
-	<span class="pl-smi">DWORD</span> <span class="pl-s1">sector</span>,       <span class="pl-c">/* Sector address in LBA */</span>
-	<span class="pl-smi">UINT</span> <span class="pl-s1">count</span>          <span class="pl-c">/* Number of sectors to write */</span>
+/**
+  * @brief  Writes Sector(s)
+  * @param  pdrv: Physical drive number (0..)
+  * @param  *buff: Data to be written
+  * @param  sector: Sector address (LBA)
+  * @param  count: Number of sectors to write (1..128)
+  * @retval DRESULT: Operation result
+  */
+#if _USE_WRITE == 1
+DRESULT USER_write (
+	BYTE pdrv,          /* Physical drive nmuber to identify the drive */
+	const BYTE *buff,   /* Data to be written */
+	DWORD sector,       /* Sector address in LBA */
+	UINT count          /* Number of sectors to write */
 )
 {
-  <span class="pl-c">/* USER CODE BEGIN WRITE */</span>
-  <span class="pl-c">/* USER CODE HERE */</span>
-<span class="pl-c">//    return RES_OK;</span>
-    <span class="pl-smi">uint8_t</span> <span class="pl-s1">res</span>;
-    <span class="pl-s1">res</span> <span class="pl-c1">=</span> <span class="pl-en">SD_WriteDisk</span>((<span class="pl-smi">uint8_t</span> <span class="pl-c1">*</span>)<span class="pl-s1">buff</span>, <span class="pl-s1">sector</span>, <span class="pl-s1">count</span>);
-    <span class="pl-k">if</span>(<span class="pl-s1">res</span> <span class="pl-c1">==</span> <span class="pl-c1">0</span>) {
-        <span class="pl-k">return</span> <span class="pl-c1">RES_OK</span>;
+  /* USER CODE BEGIN WRITE */
+  /* USER CODE HERE */
+//    return RES_OK;
+    uint8_t res;
+    res = SD_WriteDisk((uint8_t *)buff, sector, count);
+    if(res == 0) {
+        return RES_OK;
     }
-    <span class="pl-k">return</span> <span class="pl-c1">RES_ERROR</span>;
-  <span class="pl-c">/* USER CODE END WRITE */</span>
+    return RES_ERROR;
+  /* USER CODE END WRITE */
 }
-<span class="pl-k">#endif</span> <span class="pl-c">/* _USE_WRITE == 1 */</span>
+#endif /* _USE_WRITE == 1 */
 
-<span class="pl-c">/**</span>
-<span class="pl-c">  * @brief  I/O control operation</span>
-<span class="pl-c">  * @param  pdrv: Physical drive number (0..)</span>
-<span class="pl-c">  * @param  cmd: Control code</span>
-<span class="pl-c">  * @param  *buff: Buffer to send/receive control data</span>
-<span class="pl-c">  * @retval DRESULT: Operation result</span>
-<span class="pl-c">  */</span>
-<span class="pl-k">#if</span> <span class="pl-s1">_USE_IOCTL</span> <span class="pl-c1">==</span> <span class="pl-c1">1</span>
-<span class="pl-smi">DRESULT</span> <span class="pl-en">USER_ioctl</span> (
-	<span class="pl-smi">BYTE</span> <span class="pl-s1">pdrv</span>,      <span class="pl-c">/* Physical drive nmuber (0..) */</span>
-	<span class="pl-smi">BYTE</span> <span class="pl-s1">cmd</span>,       <span class="pl-c">/* Control code */</span>
-	<span class="pl-smi">void</span> <span class="pl-c1">*</span><span class="pl-s1">buff</span>      <span class="pl-c">/* Buffer to send/receive control data */</span>
+/**
+  * @brief  I/O control operation
+  * @param  pdrv: Physical drive number (0..)
+  * @param  cmd: Control code
+  * @param  *buff: Buffer to send/receive control data
+  * @retval DRESULT: Operation result
+  */
+#if _USE_IOCTL == 1
+DRESULT USER_ioctl (
+	BYTE pdrv,      /* Physical drive nmuber (0..) */
+	BYTE cmd,       /* Control code */
+	void *buff      /* Buffer to send/receive control data */
 )
 {
-  <span class="pl-c">/* USER CODE BEGIN IOCTL */</span>
-<span class="pl-c">//    DRESULT res = RES_ERROR;</span>
-<span class="pl-c">//    return res;</span>
-    <span class="pl-smi">DRESULT</span> <span class="pl-s1">res</span> <span class="pl-c1">=</span> <span class="pl-c1">RES_ERROR</span>;
+  /* USER CODE BEGIN IOCTL */
+//    DRESULT res = RES_ERROR;
+//    return res;
+    DRESULT res = RES_ERROR;
     
-    <span class="pl-k">switch</span>(<span class="pl-s1">cmd</span>) {
-        <span class="pl-k">case</span> <span class="pl-c1">CTRL_SYNC</span>:
-            <span class="pl-s1">res</span> <span class="pl-c1">=</span> <span class="pl-c1">RES_OK</span>;
-            <span class="pl-k">break</span>;
-        <span class="pl-k">case</span> <span class="pl-c1">GET_SECTOR_COUNT</span>:
-            <span class="pl-c1">*</span>(<span class="pl-smi">DWORD</span> <span class="pl-c1">*</span>)<span class="pl-s1">buff</span> <span class="pl-c1">=</span> <span class="pl-en">SD_GetSectorCount</span>();
-            <span class="pl-s1">res</span> <span class="pl-c1">=</span> <span class="pl-c1">RES_OK</span>;
-            <span class="pl-k">break</span>;
-        <span class="pl-k">case</span> <span class="pl-c1">GET_SECTOR_SIZE</span>:
-            <span class="pl-c1">*</span>(<span class="pl-smi">WORD</span> <span class="pl-c1">*</span>)<span class="pl-s1">buff</span> <span class="pl-c1">=</span> <span class="pl-c1">512</span>;
-            <span class="pl-s1">res</span> <span class="pl-c1">=</span> <span class="pl-c1">RES_OK</span>;
-            <span class="pl-k">break</span>;
-        <span class="pl-k">case</span> <span class="pl-c1">GET_BLOCK_SIZE</span>:
-            <span class="pl-c1">*</span>(<span class="pl-smi">DWORD</span> <span class="pl-c1">*</span>)<span class="pl-s1">buff</span> <span class="pl-c1">=</span> <span class="pl-c1">8</span>;
-            <span class="pl-s1">res</span> <span class="pl-c1">=</span> <span class="pl-c1">RES_OK</span>;
-            <span class="pl-k">break</span>;
-        <span class="pl-k">default</span>:
-            <span class="pl-s1">res</span> <span class="pl-c1">=</span> <span class="pl-c1">RES_PARERR</span>;
-            <span class="pl-k">break</span>;
+    switch(cmd) {
+        case CTRL_SYNC:
+            res = RES_OK;
+            break;
+        case GET_SECTOR_COUNT:
+            *(DWORD *)buff = SD_GetSectorCount();
+            res = RES_OK;
+            break;
+        case GET_SECTOR_SIZE:
+            *(WORD *)buff = 512;
+            res = RES_OK;
+            break;
+        case GET_BLOCK_SIZE:
+            *(DWORD *)buff = 8;
+            res = RES_OK;
+            break;
+        default:
+            res = RES_PARERR;
+            break;
     }
-    <span class="pl-k">return</span> <span class="pl-s1">res</span>;
-  <span class="pl-c">/* USER CODE END IOCTL */</span>
+    return res;
+  /* USER CODE END IOCTL */
 }
-<span class="pl-k">#endif</span> <span class="pl-c">/* _USE_IOCTL == 1 */</span>
-</pre></div>
+#endif /* _USE_IOCTL == 1 */
+
+
+</code></pre>
 <h4>3.4 uart_driver.h</h4>
-<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-k">#ifndef</span> <span class="pl-s1">__UART_DRIVER_H</span>
-<span class="pl-k">#define</span> <span class="pl-s1">__UART_DRIVER_H</span>
+<pre lang="c" class="notranslate"><code class="notranslate">#ifndef __UART_DRIVER_H
+#define __UART_DRIVER_H
 
-<span class="pl-k">#include</span> <span class="pl-s">"main.h"</span>
-<span class="pl-k">#include</span> <span class="pl-s">"usart.h"</span>
-<span class="pl-k">#include</span> <span class="pl-s">"dma.h"</span>
-<span class="pl-k">#include</span> <span class="pl-s">&lt;stdarg.h&gt;</span>
-<span class="pl-k">#include</span> <span class="pl-s">&lt;string.h&gt;</span>
-<span class="pl-k">#include</span> <span class="pl-s">&lt;stdio.h&gt;</span>
+#include "main.h"
+#include "usart.h"
+#include "dma.h"
+#include &lt;stdarg.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdio.h&gt;
 
-<span class="pl-k">#define</span> <span class="pl-c1">UART_DMA_RX_BUFFER_SIZE</span>     512
-<span class="pl-k">#define</span> <span class="pl-c1">UART_DATA_BUFFER_SIZE</span>       1024
-<span class="pl-k">#define</span> <span class="pl-c1">UART_TX_BUFFER_SIZE</span>         256
-<span class="pl-k">#define</span> <span class="pl-c1">CMD_NEW_FILE</span>                "$new"
+#define UART_DMA_RX_BUFFER_SIZE     512
+#define UART_DATA_BUFFER_SIZE       1024
+#define UART_TX_BUFFER_SIZE         256
+#define CMD_NEW_FILE                "$new"
 
-<span class="pl-k">typedef</span> <span class="pl-k">enum</span> {
-    <span class="pl-c1">RX_TYPE_NONE</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>,
-    <span class="pl-c1">RX_TYPE_CMD_NEW</span>,
-    <span class="pl-c1">RX_TYPE_DATA</span>
-} <span class="pl-smi">RxDataType_t</span>;
+typedef enum {
+    RX_TYPE_NONE = 0,
+    RX_TYPE_CMD_NEW,
+    RX_TYPE_DATA
+} RxDataType_t;
 
-<span class="pl-k">typedef</span> <span class="pl-k">struct</span> {
-    <span class="pl-smi">uint8_t</span>     <span class="pl-c1">dma_rx_buffer</span>[<span class="pl-c1">UART_DMA_RX_BUFFER_SIZE</span>];
-    <span class="pl-smi">uint8_t</span>     <span class="pl-c1">data_buffer</span>[<span class="pl-c1">UART_DATA_BUFFER_SIZE</span>];
-    <span class="pl-smi">char</span>        <span class="pl-c1">tx_buffer</span>[<span class="pl-c1">UART_TX_BUFFER_SIZE</span>];
-    <span class="pl-k">volatile</span> <span class="pl-smi">uint16_t</span>   <span class="pl-c1">data_len</span>;
-    <span class="pl-k">volatile</span> <span class="pl-smi">uint8_t</span>    <span class="pl-c1">rx_complete</span>;
-    <span class="pl-smi">RxDataType_t</span>        <span class="pl-c1">rx_type</span>;
-    <span class="pl-smi">UART_HandleTypeDef</span>  <span class="pl-c1">*</span><span class="pl-c1">huart</span>;
-    <span class="pl-smi">DMA_HandleTypeDef</span>   <span class="pl-c1">*</span><span class="pl-c1">hdma_rx</span>;
-} <span class="pl-smi">UART_Driver_t</span>;
+typedef struct {
+    uint8_t     dma_rx_buffer[UART_DMA_RX_BUFFER_SIZE];
+    uint8_t     data_buffer[UART_DATA_BUFFER_SIZE];
+    char        tx_buffer[UART_TX_BUFFER_SIZE];
+    volatile uint16_t   data_len;
+    volatile uint8_t    rx_complete;
+    RxDataType_t        rx_type;
+    UART_HandleTypeDef  *huart;
+    DMA_HandleTypeDef   *hdma_rx;
+} UART_Driver_t;
 
-<span class="pl-k">extern</span> <span class="pl-smi">UART_Driver_t</span> <span class="pl-s1">uart1_driver</span>;
+extern UART_Driver_t uart1_driver;
 
-<span class="pl-smi">void</span> <span class="pl-en">UART_Driver_Init</span>(<span class="pl-smi">UART_Driver_t</span> <span class="pl-c1">*</span><span class="pl-s1">driver</span>, <span class="pl-smi">UART_HandleTypeDef</span> <span class="pl-c1">*</span><span class="pl-s1">huart</span>, <span class="pl-smi">DMA_HandleTypeDef</span> <span class="pl-c1">*</span><span class="pl-s1">hdma_rx</span>);
-<span class="pl-smi">void</span> <span class="pl-en">UART_Driver_StartReceive</span>(<span class="pl-smi">UART_Driver_t</span> <span class="pl-c1">*</span><span class="pl-s1">driver</span>);
-<span class="pl-smi">void</span> <span class="pl-en">UART_Driver_IDLE_Handler</span>(<span class="pl-smi">UART_Driver_t</span> <span class="pl-c1">*</span><span class="pl-s1">driver</span>);
-<span class="pl-smi">uint8_t</span> <span class="pl-en">UART_Driver_IsRxComplete</span>(<span class="pl-smi">UART_Driver_t</span> <span class="pl-c1">*</span><span class="pl-s1">driver</span>);
-<span class="pl-smi">RxDataType_t</span> <span class="pl-en">UART_Driver_GetRxType</span>(<span class="pl-smi">UART_Driver_t</span> <span class="pl-c1">*</span><span class="pl-s1">driver</span>);
-<span class="pl-smi">void</span> <span class="pl-en">UART_Driver_GetData</span>(<span class="pl-smi">UART_Driver_t</span> <span class="pl-c1">*</span><span class="pl-s1">driver</span>, <span class="pl-smi">uint8_t</span> <span class="pl-c1">*</span><span class="pl-c1">*</span><span class="pl-s1">data</span>, <span class="pl-smi">uint16_t</span> <span class="pl-c1">*</span><span class="pl-s1">len</span>);
-<span class="pl-smi">void</span> <span class="pl-en">UART_Driver_ClearRxFlag</span>(<span class="pl-smi">UART_Driver_t</span> <span class="pl-c1">*</span><span class="pl-s1">driver</span>);
-<span class="pl-smi">void</span> <span class="pl-en">UART_Driver_Printf</span>(<span class="pl-smi">UART_Driver_t</span> <span class="pl-c1">*</span><span class="pl-s1">driver</span>, <span class="pl-k">const</span> <span class="pl-smi">char</span> <span class="pl-c1">*</span><span class="pl-s1">format</span>, ...);
+void UART_Driver_Init(UART_Driver_t *driver, UART_HandleTypeDef *huart, DMA_HandleTypeDef *hdma_rx);
+void UART_Driver_StartReceive(UART_Driver_t *driver);
+void UART_Driver_IDLE_Handler(UART_Driver_t *driver);
+uint8_t UART_Driver_IsRxComplete(UART_Driver_t *driver);
+RxDataType_t UART_Driver_GetRxType(UART_Driver_t *driver);
+void UART_Driver_GetData(UART_Driver_t *driver, uint8_t **data, uint16_t *len);
+void UART_Driver_ClearRxFlag(UART_Driver_t *driver);
+void UART_Driver_Printf(UART_Driver_t *driver, const char *format, ...);
 
-<span class="pl-k">#endif</span></pre></div>
+#endif
+
+</code></pre>
 <h4>3.5 uart_driver.c</h4>
-<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-k">#include</span> <span class="pl-s">"uart_driver.h"</span>
+<pre lang="c" class="notranslate"><code class="notranslate">#include "uart_driver.h"
 
-<span class="pl-smi">UART_Driver_t</span> <span class="pl-s1">uart1_driver</span>;
+UART_Driver_t uart1_driver;
 
-<span class="pl-k">static</span> <span class="pl-smi">RxDataType_t</span> <span class="pl-en">Parse_RxData</span>(<span class="pl-smi">uint8_t</span> <span class="pl-c1">*</span><span class="pl-s1">data</span>, <span class="pl-smi">uint16_t</span> <span class="pl-s1">len</span>)
+static RxDataType_t Parse_RxData(uint8_t *data, uint16_t len)
 {
-    <span class="pl-k">if</span>(<span class="pl-s1">len</span> &gt;= <span class="pl-en">strlen</span>(<span class="pl-c1">CMD_NEW_FILE</span>)) {
-        <span class="pl-k">if</span>(<span class="pl-en">strncmp</span>((<span class="pl-smi">char</span> <span class="pl-c1">*</span>)<span class="pl-s1">data</span>, <span class="pl-c1">CMD_NEW_FILE</span>, <span class="pl-en">strlen</span>(<span class="pl-c1">CMD_NEW_FILE</span>)) <span class="pl-c1">==</span> <span class="pl-c1">0</span>) {
-            <span class="pl-k">return</span> <span class="pl-c1">RX_TYPE_CMD_NEW</span>;
+    if(len &gt;= strlen(CMD_NEW_FILE)) {
+        if(strncmp((char *)data, CMD_NEW_FILE, strlen(CMD_NEW_FILE)) == 0) {
+            return RX_TYPE_CMD_NEW;
         }
     }
-    <span class="pl-k">return</span> <span class="pl-c1">RX_TYPE_DATA</span>;
+    return RX_TYPE_DATA;
 }
 
-<span class="pl-smi">void</span> <span class="pl-en">UART_Driver_Init</span>(<span class="pl-smi">UART_Driver_t</span> <span class="pl-c1">*</span><span class="pl-s1">driver</span>, <span class="pl-smi">UART_HandleTypeDef</span> <span class="pl-c1">*</span><span class="pl-s1">huart</span>, <span class="pl-smi">DMA_HandleTypeDef</span> <span class="pl-c1">*</span><span class="pl-s1">hdma_rx</span>)
+void UART_Driver_Init(UART_Driver_t *driver, UART_HandleTypeDef *huart, DMA_HandleTypeDef *hdma_rx)
 {
-    <span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">huart</span> <span class="pl-c1">=</span> <span class="pl-s1">huart</span>;
-    <span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">hdma_rx</span> <span class="pl-c1">=</span> <span class="pl-s1">hdma_rx</span>;
-    <span class="pl-en">memset</span>(<span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">dma_rx_buffer</span>, <span class="pl-c1">0</span>, <span class="pl-c1">UART_DMA_RX_BUFFER_SIZE</span>);
-    <span class="pl-en">memset</span>(<span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">data_buffer</span>, <span class="pl-c1">0</span>, <span class="pl-c1">UART_DATA_BUFFER_SIZE</span>);
-    <span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">data_len</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>;
-    <span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">rx_complete</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>;
-    <span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">rx_type</span> <span class="pl-c1">=</span> <span class="pl-c1">RX_TYPE_NONE</span>;
+    driver-&gt;huart = huart;
+    driver-&gt;hdma_rx = hdma_rx;
+    memset(driver-&gt;dma_rx_buffer, 0, UART_DMA_RX_BUFFER_SIZE);
+    memset(driver-&gt;data_buffer, 0, UART_DATA_BUFFER_SIZE);
+    driver-&gt;data_len = 0;
+    driver-&gt;rx_complete = 0;
+    driver-&gt;rx_type = RX_TYPE_NONE;
 }
 
-<span class="pl-smi">void</span> <span class="pl-en">UART_Driver_StartReceive</span>(<span class="pl-smi">UART_Driver_t</span> <span class="pl-c1">*</span><span class="pl-s1">driver</span>)
+void UART_Driver_StartReceive(UART_Driver_t *driver)
 {
-    <span class="pl-en">__HAL_UART_CLEAR_IDLEFLAG</span>(<span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">huart</span>);
-    <span class="pl-en">__HAL_UART_ENABLE_IT</span>(<span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">huart</span>, <span class="pl-c1">UART_IT_IDLE</span>);
-    <span class="pl-en">HAL_UART_Receive_DMA</span>(<span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">huart</span>, <span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">dma_rx_buffer</span>, <span class="pl-c1">UART_DMA_RX_BUFFER_SIZE</span>);
+    __HAL_UART_CLEAR_IDLEFLAG(driver-&gt;huart);
+    __HAL_UART_ENABLE_IT(driver-&gt;huart, UART_IT_IDLE);
+    HAL_UART_Receive_DMA(driver-&gt;huart, driver-&gt;dma_rx_buffer, UART_DMA_RX_BUFFER_SIZE);
 }
 
-<span class="pl-smi">void</span> <span class="pl-en">UART_Driver_IDLE_Handler</span>(<span class="pl-smi">UART_Driver_t</span> <span class="pl-c1">*</span><span class="pl-s1">driver</span>)
+void UART_Driver_IDLE_Handler(UART_Driver_t *driver)
 {
-    <span class="pl-smi">uint16_t</span> <span class="pl-s1">recv_len</span>;
+    uint16_t recv_len;
     
-    <span class="pl-k">if</span>(<span class="pl-en">__HAL_UART_GET_FLAG</span>(<span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">huart</span>, <span class="pl-c1">UART_FLAG_IDLE</span>) <span class="pl-c1">!=</span> <span class="pl-c1">RESET</span>)
+    if(__HAL_UART_GET_FLAG(driver-&gt;huart, UART_FLAG_IDLE) != RESET)
     {
-        <span class="pl-en">__HAL_UART_CLEAR_IDLEFLAG</span>(<span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">huart</span>);
-        <span class="pl-en">HAL_UART_DMAStop</span>(<span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">huart</span>);
+        __HAL_UART_CLEAR_IDLEFLAG(driver-&gt;huart);
+        HAL_UART_DMAStop(driver-&gt;huart);
         
-        <span class="pl-s1">recv_len</span> <span class="pl-c1">=</span> <span class="pl-c1">UART_DMA_RX_BUFFER_SIZE</span> <span class="pl-c1">-</span> <span class="pl-en">__HAL_DMA_GET_COUNTER</span>(<span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">hdma_rx</span>);
+        recv_len = UART_DMA_RX_BUFFER_SIZE - __HAL_DMA_GET_COUNTER(driver-&gt;hdma_rx);
         
-        <span class="pl-k">if</span>(<span class="pl-s1">recv_len</span> <span class="pl-c1">&gt;</span> <span class="pl-c1">0</span> <span class="pl-c1">&amp;&amp;</span> <span class="pl-s1">recv_len</span> &lt;= <span class="pl-c1">UART_DATA_BUFFER_SIZE</span>)
+        if(recv_len &gt; 0 &amp;&amp; recv_len &lt;= UART_DATA_BUFFER_SIZE)
         {
-            <span class="pl-en">memcpy</span>(<span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">data_buffer</span>, <span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">dma_rx_buffer</span>, <span class="pl-s1">recv_len</span>);
-            <span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">data_len</span> <span class="pl-c1">=</span> <span class="pl-s1">recv_len</span>;
-            <span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">rx_type</span> <span class="pl-c1">=</span> <span class="pl-en">Parse_RxData</span>(<span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">data_buffer</span>, <span class="pl-s1">recv_len</span>);
-            <span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">rx_complete</span> <span class="pl-c1">=</span> <span class="pl-c1">1</span>;
+            memcpy(driver-&gt;data_buffer, driver-&gt;dma_rx_buffer, recv_len);
+            driver-&gt;data_len = recv_len;
+            driver-&gt;rx_type = Parse_RxData(driver-&gt;data_buffer, recv_len);
+            driver-&gt;rx_complete = 1;
         }
         
-        <span class="pl-en">memset</span>(<span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">dma_rx_buffer</span>, <span class="pl-c1">0</span>, <span class="pl-c1">UART_DMA_RX_BUFFER_SIZE</span>);
-        <span class="pl-en">HAL_UART_Receive_DMA</span>(<span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">huart</span>, <span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">dma_rx_buffer</span>, <span class="pl-c1">UART_DMA_RX_BUFFER_SIZE</span>);
+        memset(driver-&gt;dma_rx_buffer, 0, UART_DMA_RX_BUFFER_SIZE);
+        HAL_UART_Receive_DMA(driver-&gt;huart, driver-&gt;dma_rx_buffer, UART_DMA_RX_BUFFER_SIZE);
     }
 }
 
-<span class="pl-smi">uint8_t</span> <span class="pl-en">UART_Driver_IsRxComplete</span>(<span class="pl-smi">UART_Driver_t</span> <span class="pl-c1">*</span><span class="pl-s1">driver</span>) { <span class="pl-k">return</span> <span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">rx_complete</span>; }
-<span class="pl-smi">RxDataType_t</span> <span class="pl-en">UART_Driver_GetRxType</span>(<span class="pl-smi">UART_Driver_t</span> <span class="pl-c1">*</span><span class="pl-s1">driver</span>) { <span class="pl-k">return</span> <span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">rx_type</span>; }
+uint8_t UART_Driver_IsRxComplete(UART_Driver_t *driver) { return driver-&gt;rx_complete; }
+RxDataType_t UART_Driver_GetRxType(UART_Driver_t *driver) { return driver-&gt;rx_type; }
 
-<span class="pl-smi">void</span> <span class="pl-en">UART_Driver_GetData</span>(<span class="pl-smi">UART_Driver_t</span> <span class="pl-c1">*</span><span class="pl-s1">driver</span>, <span class="pl-smi">uint8_t</span> <span class="pl-c1">*</span><span class="pl-c1">*</span><span class="pl-s1">data</span>, <span class="pl-smi">uint16_t</span> <span class="pl-c1">*</span><span class="pl-s1">len</span>)
+void UART_Driver_GetData(UART_Driver_t *driver, uint8_t **data, uint16_t *len)
 {
-    <span class="pl-c1">*</span><span class="pl-s1">data</span> <span class="pl-c1">=</span> <span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">data_buffer</span>;
-    <span class="pl-c1">*</span><span class="pl-s1">len</span> <span class="pl-c1">=</span> <span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">data_len</span>;
+    *data = driver-&gt;data_buffer;
+    *len = driver-&gt;data_len;
 }
 
-<span class="pl-smi">void</span> <span class="pl-en">UART_Driver_ClearRxFlag</span>(<span class="pl-smi">UART_Driver_t</span> <span class="pl-c1">*</span><span class="pl-s1">driver</span>)
+void UART_Driver_ClearRxFlag(UART_Driver_t *driver)
 {
-    <span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">rx_complete</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>;
-    <span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">data_len</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>;
-    <span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">rx_type</span> <span class="pl-c1">=</span> <span class="pl-c1">RX_TYPE_NONE</span>;
+    driver-&gt;rx_complete = 0;
+    driver-&gt;data_len = 0;
+    driver-&gt;rx_type = RX_TYPE_NONE;
 }
 
-<span class="pl-smi">void</span> <span class="pl-en">UART_Driver_Printf</span>(<span class="pl-smi">UART_Driver_t</span> <span class="pl-c1">*</span><span class="pl-s1">driver</span>, <span class="pl-k">const</span> <span class="pl-smi">char</span> <span class="pl-c1">*</span><span class="pl-s1">format</span>, ...)
+void UART_Driver_Printf(UART_Driver_t *driver, const char *format, ...)
 {
-    <span class="pl-smi">uint16_t</span> <span class="pl-s1">len</span>;
-    <span class="pl-smi">va_list</span> <span class="pl-s1">args</span>;
-    <span class="pl-en">va_start</span>(<span class="pl-s1">args</span>, <span class="pl-s1">format</span>);
-    <span class="pl-s1">len</span> <span class="pl-c1">=</span> <span class="pl-en">vsprintf</span>(<span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">tx_buffer</span>, <span class="pl-s1">format</span>, <span class="pl-s1">args</span>);
-    <span class="pl-en">va_end</span>(<span class="pl-s1">args</span>);
-    <span class="pl-en">HAL_UART_Transmit</span>(<span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">huart</span>, (<span class="pl-smi">uint8_t</span> <span class="pl-c1">*</span>)<span class="pl-s1">driver</span><span class="pl-c1">-&gt;</span><span class="pl-c1">tx_buffer</span>, <span class="pl-s1">len</span>, <span class="pl-c1">1000</span>);
-}</pre></div>
+    uint16_t len;
+    va_list args;
+    va_start(args, format);
+    len = vsprintf(driver-&gt;tx_buffer, format, args);
+    va_end(args);
+    HAL_UART_Transmit(driver-&gt;huart, (uint8_t *)driver-&gt;tx_buffer, len, 1000);
+}
+
+</code></pre>
 <h4>3.6 sd_logger.h</h4>
-<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-k">#ifndef</span> <span class="pl-s1">__SD_LOGGER_H</span>
-<span class="pl-k">#define</span> <span class="pl-s1">__SD_LOGGER_H</span>
+<pre lang="c" class="notranslate"><code class="notranslate">#ifndef __SD_LOGGER_H
+#define __SD_LOGGER_H
 
-<span class="pl-k">#include</span> <span class="pl-s">"main.h"</span>
-<span class="pl-k">#include</span> <span class="pl-s">"fatfs.h"</span>
-<span class="pl-k">#include</span> <span class="pl-s">&lt;string.h&gt;</span>
-<span class="pl-k">#include</span> <span class="pl-s">&lt;stdio.h&gt;</span>
+#include "main.h"
+#include "fatfs.h"
+#include &lt;string.h&gt;
+#include &lt;stdio.h&gt;
 
-<span class="pl-k">#define</span> <span class="pl-c1">FILE_NAME_PREFIX</span>        "data"
-<span class="pl-k">#define</span> <span class="pl-c1">FILE_NAME_EXTENSION</span>     ".txt"
-<span class="pl-k">#define</span> <span class="pl-c1">FILE_INDEX_MAX</span>          99
-<span class="pl-k">#define</span> <span class="pl-c1">SYNC_AFTER_BYTES</span>        512
+#define FILE_NAME_PREFIX        "data"
+#define FILE_NAME_EXTENSION     ".txt"
+#define FILE_INDEX_MAX          99
+#define SYNC_AFTER_BYTES        512
 
-<span class="pl-k">typedef</span> <span class="pl-k">enum</span> {
-    <span class="pl-c1">LOGGER_IDLE</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>,
-    <span class="pl-c1">LOGGER_RECORDING</span>
-} <span class="pl-smi">LoggerState_t</span>;
+typedef enum {
+    LOGGER_IDLE = 0,
+    LOGGER_RECORDING
+} LoggerState_t;
 
-<span class="pl-k">typedef</span> <span class="pl-k">struct</span> {
-    <span class="pl-smi">FATFS</span>       <span class="pl-c1">fs</span>;
-    <span class="pl-smi">FIL</span>         <span class="pl-c1">file</span>;
-    <span class="pl-smi">char</span>        <span class="pl-c1">filename</span>[<span class="pl-c1">32</span>];
-    <span class="pl-smi">uint8_t</span>     <span class="pl-c1">file_index</span>;
-    <span class="pl-smi">LoggerState_t</span> <span class="pl-c1">state</span>;
-    <span class="pl-smi">uint8_t</span>     <span class="pl-c1">sd_mounted</span>;
-    <span class="pl-smi">uint32_t</span>    <span class="pl-c1">total_bytes</span>;
-    <span class="pl-smi">uint32_t</span>    <span class="pl-c1">unsync_bytes</span>;
-} <span class="pl-smi">SD_Logger_t</span>;
+typedef struct {
+    FATFS       fs;
+    FIL         file;
+    char        filename[32];
+    uint8_t     file_index;
+    LoggerState_t state;
+    uint8_t     sd_mounted;
+    uint32_t    total_bytes;
+    uint32_t    unsync_bytes;
+} SD_Logger_t;
 
-<span class="pl-k">extern</span> <span class="pl-smi">SD_Logger_t</span> <span class="pl-s1">sd_logger</span>;
+extern SD_Logger_t sd_logger;
 
-<span class="pl-smi">uint8_t</span> <span class="pl-en">SD_Logger_Init</span>(<span class="pl-smi">void</span>);
-<span class="pl-smi">uint8_t</span> <span class="pl-en">SD_Logger_NewFile</span>(<span class="pl-smi">void</span>);
-<span class="pl-smi">uint16_t</span> <span class="pl-en">SD_Logger_WriteData</span>(<span class="pl-smi">uint8_t</span> <span class="pl-c1">*</span><span class="pl-s1">data</span>, <span class="pl-smi">uint16_t</span> <span class="pl-s1">len</span>);
-<span class="pl-smi">uint8_t</span> <span class="pl-en">SD_Logger_Sync</span>(<span class="pl-smi">void</span>);
-<span class="pl-smi">LoggerState_t</span> <span class="pl-en">SD_Logger_GetState</span>(<span class="pl-smi">void</span>);
-<span class="pl-k">const</span> <span class="pl-smi">char</span><span class="pl-c1">*</span> <span class="pl-en">SD_Logger_GetFilename</span>(<span class="pl-smi">void</span>);
-<span class="pl-smi">uint8_t</span> <span class="pl-en">SD_Logger_GetFileIndex</span>(<span class="pl-smi">void</span>);
-<span class="pl-smi">uint32_t</span> <span class="pl-en">SD_Logger_GetTotalBytes</span>(<span class="pl-smi">void</span>);
+uint8_t SD_Logger_Init(void);
+uint8_t SD_Logger_NewFile(void);
+uint16_t SD_Logger_WriteData(uint8_t *data, uint16_t len);
+uint8_t SD_Logger_Sync(void);
+LoggerState_t SD_Logger_GetState(void);
+const char* SD_Logger_GetFilename(void);
+uint8_t SD_Logger_GetFileIndex(void);
+uint32_t SD_Logger_GetTotalBytes(void);
 
-<span class="pl-k">#endif</span></pre></div>
+#endif
+
+</code></pre>
 <h4>3.7 sd_logger.c</h4>
-<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-k">#include</span> <span class="pl-s">"sd_logger.h"</span>
+<pre lang="c" class="notranslate"><code class="notranslate">#include "sd_logger.h"
 
-<span class="pl-smi">SD_Logger_t</span> <span class="pl-s1">sd_logger</span>;
+SD_Logger_t sd_logger;
 
-<span class="pl-k">static</span> <span class="pl-smi">void</span> <span class="pl-en">Generate_Filename</span>(<span class="pl-smi">uint8_t</span> <span class="pl-s1">index</span>, <span class="pl-smi">char</span> <span class="pl-c1">*</span><span class="pl-s1">filename</span>)
+static void Generate_Filename(uint8_t index, char *filename)
 {
-    <span class="pl-en">sprintf</span>(<span class="pl-s1">filename</span>, <span class="pl-s">"%s%02d%s"</span>, <span class="pl-c1">FILE_NAME_PREFIX</span>, <span class="pl-s1">index</span>, <span class="pl-c1">FILE_NAME_EXTENSION</span>);
+    sprintf(filename, "%s%02d%s", FILE_NAME_PREFIX, index, FILE_NAME_EXTENSION);
 }
 
-<span class="pl-k">static</span> <span class="pl-smi">uint8_t</span> <span class="pl-en">File_Exists</span>(<span class="pl-k">const</span> <span class="pl-smi">char</span> <span class="pl-c1">*</span><span class="pl-s1">filename</span>)
+static uint8_t File_Exists(const char *filename)
 {
-    <span class="pl-smi">FILINFO</span> <span class="pl-s1">fno</span>;
-    <span class="pl-k">return</span> (<span class="pl-en">f_stat</span>(<span class="pl-s1">filename</span>, <span class="pl-c1">&amp;</span><span class="pl-s1">fno</span>) <span class="pl-c1">==</span> <span class="pl-c1">FR_OK</span>) ? <span class="pl-c1">1</span> : <span class="pl-c1">0</span>;
+    FILINFO fno;
+    return (f_stat(filename, &amp;fno) == FR_OK) ? 1 : 0;
 }
 
-<span class="pl-k">static</span> <span class="pl-smi">uint8_t</span> <span class="pl-en">Find_Next_FileIndex</span>(<span class="pl-smi">void</span>)
+static uint8_t Find_Next_FileIndex(void)
 {
-    <span class="pl-smi">char</span> <span class="pl-s1">filename</span>[<span class="pl-c1">32</span>];
-    <span class="pl-k">for</span>(<span class="pl-smi">uint8_t</span> <span class="pl-s1">i</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>; <span class="pl-s1">i</span> &lt;= <span class="pl-c1">FILE_INDEX_MAX</span>; <span class="pl-s1">i</span><span class="pl-c1">++</span>) {
-        <span class="pl-en">Generate_Filename</span>(<span class="pl-s1">i</span>, <span class="pl-s1">filename</span>);
-        <span class="pl-k">if</span>(!<span class="pl-en">File_Exists</span>(<span class="pl-s1">filename</span>)) <span class="pl-k">return</span> <span class="pl-s1">i</span>;
+    char filename[32];
+    for(uint8_t i = 0; i &lt;= FILE_INDEX_MAX; i++) {
+        Generate_Filename(i, filename);
+        if(!File_Exists(filename)) return i;
     }
-    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
+    return 0;
 }
 
-<span class="pl-smi">uint8_t</span> <span class="pl-en">SD_Logger_Init</span>(<span class="pl-smi">void</span>)
+uint8_t SD_Logger_Init(void)
 {
-    <span class="pl-smi">FRESULT</span> <span class="pl-s1">fres</span>;
-    <span class="pl-en">memset</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">sd_logger</span>, <span class="pl-c1">0</span>, <span class="pl-k">sizeof</span>(<span class="pl-s1">SD_Logger_t</span>));
+    FRESULT fres;
+    memset(&amp;sd_logger, 0, sizeof(SD_Logger_t));
     
-    <span class="pl-s1">fres</span> <span class="pl-c1">=</span> <span class="pl-en">f_mount</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">sd_logger</span>.<span class="pl-c1">fs</span>, <span class="pl-s">""</span>, <span class="pl-c1">1</span>);
-    <span class="pl-k">if</span>(<span class="pl-s1">fres</span> <span class="pl-c1">!=</span> <span class="pl-c1">FR_OK</span>) <span class="pl-k">return</span> (<span class="pl-smi">uint8_t</span>)<span class="pl-s1">fres</span>;
+    fres = f_mount(&amp;sd_logger.fs, "", 1);
+    if(fres != FR_OK) return (uint8_t)fres;
     
-    <span class="pl-s1">sd_logger</span>.<span class="pl-c1">sd_mounted</span> <span class="pl-c1">=</span> <span class="pl-c1">1</span>;
-    <span class="pl-s1">sd_logger</span>.<span class="pl-c1">file_index</span> <span class="pl-c1">=</span> <span class="pl-en">Find_Next_FileIndex</span>();
-    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
+    sd_logger.sd_mounted = 1;
+    sd_logger.file_index = Find_Next_FileIndex();
+    return 0;
 }
 
-<span class="pl-smi">uint8_t</span> <span class="pl-en">SD_Logger_NewFile</span>(<span class="pl-smi">void</span>)
+uint8_t SD_Logger_NewFile(void)
 {
-    <span class="pl-smi">FRESULT</span> <span class="pl-s1">fres</span>;
-    <span class="pl-k">if</span>(!<span class="pl-s1">sd_logger</span>.<span class="pl-c1">sd_mounted</span>) <span class="pl-k">return</span> <span class="pl-c1">1</span>;
+    FRESULT fres;
+    if(!sd_logger.sd_mounted) return 1;
     
-    <span class="pl-c">/* 关闭旧文件 */</span>
-    <span class="pl-k">if</span>(<span class="pl-s1">sd_logger</span>.<span class="pl-c1">state</span> <span class="pl-c1">==</span> <span class="pl-c1">LOGGER_RECORDING</span>) {
-        <span class="pl-en">f_sync</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">sd_logger</span>.<span class="pl-c1">file</span>);
-        <span class="pl-en">f_close</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">sd_logger</span>.<span class="pl-c1">file</span>);
-    }
-    
-    <span class="pl-c">/* 创建新文件 */</span>
-    <span class="pl-en">Generate_Filename</span>(<span class="pl-s1">sd_logger</span>.<span class="pl-c1">file_index</span>, <span class="pl-s1">sd_logger</span>.<span class="pl-c1">filename</span>);
-    <span class="pl-s1">fres</span> <span class="pl-c1">=</span> <span class="pl-en">f_open</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">sd_logger</span>.<span class="pl-c1">file</span>, <span class="pl-s1">sd_logger</span>.<span class="pl-c1">filename</span>, <span class="pl-c1">FA_CREATE_ALWAYS</span> | <span class="pl-c1">FA_WRITE</span>);
-    <span class="pl-k">if</span>(<span class="pl-s1">fres</span> <span class="pl-c1">!=</span> <span class="pl-c1">FR_OK</span>) <span class="pl-k">return</span> (<span class="pl-smi">uint8_t</span>)<span class="pl-s1">fres</span>;
-    
-    <span class="pl-s1">sd_logger</span>.<span class="pl-c1">state</span> <span class="pl-c1">=</span> <span class="pl-c1">LOGGER_RECORDING</span>;
-    <span class="pl-s1">sd_logger</span>.<span class="pl-c1">total_bytes</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>;
-    <span class="pl-s1">sd_logger</span>.<span class="pl-c1">unsync_bytes</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>;
-    
-    <span class="pl-s1">sd_logger</span>.<span class="pl-c1">file_index</span><span class="pl-c1">++</span>;
-    <span class="pl-k">if</span>(<span class="pl-s1">sd_logger</span>.<span class="pl-c1">file_index</span> <span class="pl-c1">&gt;</span> <span class="pl-c1">FILE_INDEX_MAX</span>) <span class="pl-s1">sd_logger</span>.<span class="pl-c1">file_index</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>;
-    
-    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
-}
-
-<span class="pl-smi">uint16_t</span> <span class="pl-en">SD_Logger_WriteData</span>(<span class="pl-smi">uint8_t</span> <span class="pl-c1">*</span><span class="pl-s1">data</span>, <span class="pl-smi">uint16_t</span> <span class="pl-s1">len</span>)
-{
-    <span class="pl-smi">UINT</span> <span class="pl-s1">bw</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>;
-    <span class="pl-k">if</span>(<span class="pl-s1">sd_logger</span>.<span class="pl-c1">state</span> <span class="pl-c1">!=</span> <span class="pl-c1">LOGGER_RECORDING</span>) <span class="pl-k">return</span> <span class="pl-c1">0</span>;
-    
-    <span class="pl-k">if</span>(<span class="pl-en">f_write</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">sd_logger</span>.<span class="pl-c1">file</span>, <span class="pl-s1">data</span>, <span class="pl-s1">len</span>, <span class="pl-c1">&amp;</span><span class="pl-s1">bw</span>) <span class="pl-c1">!=</span> <span class="pl-c1">FR_OK</span>) <span class="pl-k">return</span> <span class="pl-c1">0</span>;
-    
-    <span class="pl-s1">sd_logger</span>.<span class="pl-c1">total_bytes</span> <span class="pl-c1">+=</span> <span class="pl-s1">bw</span>;
-    <span class="pl-s1">sd_logger</span>.<span class="pl-c1">unsync_bytes</span> <span class="pl-c1">+=</span> <span class="pl-s1">bw</span>;
-    
-    <span class="pl-c">/* 自动同步保护 */</span>
-    <span class="pl-k">if</span>(<span class="pl-s1">sd_logger</span>.<span class="pl-c1">unsync_bytes</span> &gt;= <span class="pl-c1">SYNC_AFTER_BYTES</span>) {
-        <span class="pl-en">f_sync</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">sd_logger</span>.<span class="pl-c1">file</span>);
-        <span class="pl-s1">sd_logger</span>.<span class="pl-c1">unsync_bytes</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>;
+    /* 关闭旧文件 */
+    if(sd_logger.state == LOGGER_RECORDING) {
+        f_sync(&amp;sd_logger.file);
+        f_close(&amp;sd_logger.file);
     }
     
-    <span class="pl-k">return</span> (<span class="pl-smi">uint16_t</span>)<span class="pl-s1">bw</span>;
+    /* 创建新文件 */
+    Generate_Filename(sd_logger.file_index, sd_logger.filename);
+    fres = f_open(&amp;sd_logger.file, sd_logger.filename, FA_CREATE_ALWAYS | FA_WRITE);
+    if(fres != FR_OK) return (uint8_t)fres;
+    
+    sd_logger.state = LOGGER_RECORDING;
+    sd_logger.total_bytes = 0;
+    sd_logger.unsync_bytes = 0;
+    
+    sd_logger.file_index++;
+    if(sd_logger.file_index &gt; FILE_INDEX_MAX) sd_logger.file_index = 0;
+    
+    return 0;
 }
 
-<span class="pl-smi">uint8_t</span> <span class="pl-en">SD_Logger_Sync</span>(<span class="pl-smi">void</span>)
+uint16_t SD_Logger_WriteData(uint8_t *data, uint16_t len)
 {
-    <span class="pl-k">if</span>(<span class="pl-s1">sd_logger</span>.<span class="pl-c1">state</span> <span class="pl-c1">!=</span> <span class="pl-c1">LOGGER_RECORDING</span>) <span class="pl-k">return</span> <span class="pl-c1">0</span>;
-    <span class="pl-s1">sd_logger</span>.<span class="pl-c1">unsync_bytes</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>;
-    <span class="pl-k">return</span> (<span class="pl-smi">uint8_t</span>)<span class="pl-en">f_sync</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">sd_logger</span>.<span class="pl-c1">file</span>);
+    UINT bw = 0;
+    if(sd_logger.state != LOGGER_RECORDING) return 0;
+    
+    if(f_write(&amp;sd_logger.file, data, len, &amp;bw) != FR_OK) return 0;
+    
+    sd_logger.total_bytes += bw;
+    sd_logger.unsync_bytes += bw;
+    
+    /* 自动同步保护 */
+    if(sd_logger.unsync_bytes &gt;= SYNC_AFTER_BYTES) {
+        f_sync(&amp;sd_logger.file);
+        sd_logger.unsync_bytes = 0;
+    }
+    
+    return (uint16_t)bw;
 }
 
-<span class="pl-smi">LoggerState_t</span> <span class="pl-en">SD_Logger_GetState</span>(<span class="pl-smi">void</span>) { <span class="pl-k">return</span> <span class="pl-s1">sd_logger</span>.<span class="pl-c1">state</span>; }
-<span class="pl-k">const</span> <span class="pl-smi">char</span><span class="pl-c1">*</span> <span class="pl-en">SD_Logger_GetFilename</span>(<span class="pl-smi">void</span>) { <span class="pl-k">return</span> <span class="pl-s1">sd_logger</span>.<span class="pl-c1">filename</span>; }
-<span class="pl-smi">uint8_t</span> <span class="pl-en">SD_Logger_GetFileIndex</span>(<span class="pl-smi">void</span>) { <span class="pl-k">return</span> <span class="pl-s1">sd_logger</span>.<span class="pl-c1">file_index</span>; }
-<span class="pl-smi">uint32_t</span> <span class="pl-en">SD_Logger_GetTotalBytes</span>(<span class="pl-smi">void</span>) { <span class="pl-k">return</span> <span class="pl-s1">sd_logger</span>.<span class="pl-c1">total_bytes</span>; }</pre></div>
+uint8_t SD_Logger_Sync(void)
+{
+    if(sd_logger.state != LOGGER_RECORDING) return 0;
+    sd_logger.unsync_bytes = 0;
+    return (uint8_t)f_sync(&amp;sd_logger.file);
+}
+
+LoggerState_t SD_Logger_GetState(void) { return sd_logger.state; }
+const char* SD_Logger_GetFilename(void) { return sd_logger.filename; }
+uint8_t SD_Logger_GetFileIndex(void) { return sd_logger.file_index; }
+uint32_t SD_Logger_GetTotalBytes(void) { return sd_logger.total_bytes; }
+
+</code></pre>
 <h4>3.8 main.c</h4>
-<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-k">#include</span> <span class="pl-s">"main.h"</span>
-<span class="pl-k">#include</span> <span class="pl-s">"dma.h"</span>
-<span class="pl-k">#include</span> <span class="pl-s">"fatfs.h"</span>
-<span class="pl-k">#include</span> <span class="pl-s">"spi.h"</span>
-<span class="pl-k">#include</span> <span class="pl-s">"tim.h"</span>
-<span class="pl-k">#include</span> <span class="pl-s">"usart.h"</span>
-<span class="pl-k">#include</span> <span class="pl-s">"gpio.h"</span>
-<span class="pl-k">#include</span> <span class="pl-s">"uart_driver.h"</span>
-<span class="pl-k">#include</span> <span class="pl-s">"sd_logger.h"</span>
+<pre lang="c" class="notranslate"><code class="notranslate">#include "main.h"
+#include "dma.h"
+#include "fatfs.h"
+#include "spi.h"
+#include "tim.h"
+#include "usart.h"
+#include "gpio.h"
+#include "uart_driver.h"
+#include "sd_logger.h"
 
-<span class="pl-k">volatile</span> <span class="pl-smi">uint8_t</span> <span class="pl-s1">tim2_flag</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>;
-<span class="pl-k">volatile</span> <span class="pl-smi">uint16_t</span> <span class="pl-s1">tim2_counter</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>;
+volatile uint8_t tim2_flag = 0;
+volatile uint16_t tim2_counter = 0;
 
-<span class="pl-smi">int</span> <span class="pl-en">main</span>(<span class="pl-smi">void</span>)
+int main(void)
 {
-    <span class="pl-en">HAL_Init</span>();
-    <span class="pl-en">SystemClock_Config</span>();
-    <span class="pl-en">MX_GPIO_Init</span>();
-    <span class="pl-en">MX_DMA_Init</span>();
-    <span class="pl-en">MX_SPI1_Init</span>();
-    <span class="pl-en">MX_TIM2_Init</span>();
-    <span class="pl-en">MX_USART1_UART_Init</span>();
-    <span class="pl-en">MX_FATFS_Init</span>();
+    HAL_Init();
+    SystemClock_Config();
+    MX_GPIO_Init();
+    MX_DMA_Init();
+    MX_SPI1_Init();
+    MX_TIM2_Init();
+    MX_USART1_UART_Init();
+    MX_FATFS_Init();
     
-    <span class="pl-en">UART_Driver_Init</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">uart1_driver</span>, <span class="pl-c1">&amp;</span><span class="pl-s1">huart1</span>, <span class="pl-c1">&amp;</span><span class="pl-s1">hdma_usart1_rx</span>);
+    UART_Driver_Init(&amp;uart1_driver, &amp;huart1, &amp;hdma_usart1_rx);
     
-    <span class="pl-k">if</span>(<span class="pl-en">SD_Logger_Init</span>() <span class="pl-c1">==</span> <span class="pl-c1">0</span>) {
-        <span class="pl-en">UART_Driver_Printf</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">uart1_driver</span>, <span class="pl-s">"SD Ready! Next: data%02d.txt\r\n"</span>, <span class="pl-en">SD_Logger_GetFileIndex</span>());
+    if(SD_Logger_Init() == 0) {
+        UART_Driver_Printf(&amp;uart1_driver, "SD Ready! Next: data%02d.txt\r\n", SD_Logger_GetFileIndex());
     }
     
-    <span class="pl-en">UART_Driver_StartReceive</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">uart1_driver</span>);
-    <span class="pl-en">HAL_TIM_Base_Start_IT</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">htim2</span>);
+    UART_Driver_StartReceive(&amp;uart1_driver);
+    HAL_TIM_Base_Start_IT(&amp;htim2);
     
-    <span class="pl-en">UART_Driver_Printf</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">uart1_driver</span>, <span class="pl-s">"Send '$new' to start recording\r\n"</span>);
+    UART_Driver_Printf(&amp;uart1_driver, "Send '$new' to start recording\r\n");
     
-    <span class="pl-k">while</span>(<span class="pl-c1">1</span>)
+    while(1)
     {
-        <span class="pl-c">/* 定时任务 */</span>
-        <span class="pl-k">if</span>(<span class="pl-s1">tim2_flag</span>)
+        /* 定时任务 */
+        if(tim2_flag)
         {
-            <span class="pl-s1">tim2_flag</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>;
+            tim2_flag = 0;
             
-            <span class="pl-k">if</span>(<span class="pl-s1">tim2_counter</span> % <span class="pl-c1">100</span> <span class="pl-c1">==</span> <span class="pl-c1">0</span>) {  <span class="pl-c">/* 1秒 */</span>
-                <span class="pl-en">HAL_GPIO_TogglePin</span>(<span class="pl-s1">LED_GPIO_Port</span>, <span class="pl-s1">LED_Pin</span>);
+            if(tim2_counter % 100 == 0) {  /* 1秒 */
+                HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
             }
             
-            <span class="pl-k">if</span>(<span class="pl-s1">tim2_counter</span> % <span class="pl-c1">200</span> <span class="pl-c1">==</span> <span class="pl-c1">0</span>) {  <span class="pl-c">/* 2秒同步 */</span>
-                <span class="pl-k">if</span>(<span class="pl-en">SD_Logger_GetState</span>() <span class="pl-c1">==</span> <span class="pl-c1">LOGGER_RECORDING</span>) {
-                    <span class="pl-en">SD_Logger_Sync</span>();
+            if(tim2_counter % 200 == 0) {  /* 2秒同步 */
+                if(SD_Logger_GetState() == LOGGER_RECORDING) {
+                    SD_Logger_Sync();
                 }
             }
             
-            <span class="pl-k">if</span>(<span class="pl-s1">tim2_counter</span> &gt;= <span class="pl-c1">10000</span>) <span class="pl-s1">tim2_counter</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>;
-            <span class="pl-s1">tim2_counter</span><span class="pl-c1">++</span>;
+            if(tim2_counter &gt;= 10000) tim2_counter = 0;
+            tim2_counter++;
         }
         
-        <span class="pl-c">/* 串口处理 */</span>
-        <span class="pl-k">if</span>(<span class="pl-en">UART_Driver_IsRxComplete</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">uart1_driver</span>))
+        /* 串口处理 */
+        if(UART_Driver_IsRxComplete(&amp;uart1_driver))
         {
-            <span class="pl-smi">RxDataType_t</span> <span class="pl-s1">rx_type</span> <span class="pl-c1">=</span> <span class="pl-en">UART_Driver_GetRxType</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">uart1_driver</span>);
+            RxDataType_t rx_type = UART_Driver_GetRxType(&amp;uart1_driver);
             
-            <span class="pl-k">if</span>(<span class="pl-s1">rx_type</span> <span class="pl-c1">==</span> <span class="pl-c1">RX_TYPE_CMD_NEW</span>) {
-                <span class="pl-k">if</span>(<span class="pl-en">SD_Logger_NewFile</span>() <span class="pl-c1">==</span> <span class="pl-c1">0</span>) {
-                    <span class="pl-en">UART_Driver_Printf</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">uart1_driver</span>, <span class="pl-s">"Created: %s\r\n"</span>, <span class="pl-en">SD_Logger_GetFilename</span>());
+            if(rx_type == RX_TYPE_CMD_NEW) {
+                if(SD_Logger_NewFile() == 0) {
+                    UART_Driver_Printf(&amp;uart1_driver, "Created: %s\r\n", SD_Logger_GetFilename());
                 }
             }
-            <span class="pl-k">else</span> <span class="pl-k">if</span>(<span class="pl-s1">rx_type</span> <span class="pl-c1">==</span> <span class="pl-c1">RX_TYPE_DATA</span>) {
-                <span class="pl-k">if</span>(<span class="pl-en">SD_Logger_GetState</span>() <span class="pl-c1">==</span> <span class="pl-c1">LOGGER_RECORDING</span>) {
-                    <span class="pl-smi">uint8_t</span> <span class="pl-c1">*</span><span class="pl-s1">data</span>; <span class="pl-smi">uint16_t</span> <span class="pl-s1">len</span>;
-                    <span class="pl-en">UART_Driver_GetData</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">uart1_driver</span>, <span class="pl-c1">&amp;</span><span class="pl-s1">data</span>, <span class="pl-c1">&amp;</span><span class="pl-s1">len</span>);
-                    <span class="pl-en">SD_Logger_WriteData</span>(<span class="pl-s1">data</span>, <span class="pl-s1">len</span>);
+            else if(rx_type == RX_TYPE_DATA) {
+                if(SD_Logger_GetState() == LOGGER_RECORDING) {
+                    uint8_t *data; uint16_t len;
+                    UART_Driver_GetData(&amp;uart1_driver, &amp;data, &amp;len);
+                    SD_Logger_WriteData(data, len);
                 }
             }
             
-            <span class="pl-en">UART_Driver_ClearRxFlag</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">uart1_driver</span>);
+            UART_Driver_ClearRxFlag(&amp;uart1_driver);
         }
     }
 }
 
-<span class="pl-smi">void</span> <span class="pl-en">HAL_TIM_PeriodElapsedCallback</span>(<span class="pl-smi">TIM_HandleTypeDef</span> <span class="pl-c1">*</span><span class="pl-s1">htim</span>)
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-    <span class="pl-k">if</span>(<span class="pl-s1">htim</span><span class="pl-c1">-&gt;</span><span class="pl-c1">Instance</span> <span class="pl-c1">==</span> <span class="pl-c1">TIM2</span>) <span class="pl-s1">tim2_flag</span> <span class="pl-c1">=</span> <span class="pl-c1">1</span>;
-}</pre></div>
-<h4>3.9 stm32f1xx_it.c（中断部分）</h4>
-<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-k">#include</span> <span class="pl-s">"uart_driver.h"</span>
+    if(htim-&gt;Instance == TIM2) tim2_flag = 1;
+}
 
-<span class="pl-smi">void</span> <span class="pl-en">USART1_IRQHandler</span>(<span class="pl-smi">void</span>)
+</code></pre>
+<h4>3.9 stm32f1xx_it.c（中断部分）</h4>
+<pre lang="c" class="notranslate"><code class="notranslate">#include "uart_driver.h"
+
+void USART1_IRQHandler(void)
 {
-    <span class="pl-en">UART_Driver_IDLE_Handler</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">uart1_driver</span>);
-    <span class="pl-en">HAL_UART_IRQHandler</span>(<span class="pl-c1">&amp;</span><span class="pl-s1">huart1</span>);
-}</pre></div>
+    UART_Driver_IDLE_Handler(&amp;uart1_driver);
+    HAL_UART_IRQHandler(&amp;huart1);
+}
+
+</code></pre>
 <h3>四、断电保护机制</h3>
 <pre class="notranslate"><code class="notranslate">┌─────────────────────────────────────────┐
 │           双重保护                       │
